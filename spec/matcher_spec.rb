@@ -32,6 +32,7 @@ describe 'tests_tp_tadp_matcher' do
     expect(list([2,1,3,4], true).call(un_array)).to be(false)
     expect(list([2,1,3,4], false).call(un_array)).to eq(false)
     expect(list([1,2,3]).call(un_array)).to be(false)
+    expect(list([1,2,3], false).call([1,2,2,4])).to be(false)
   end
 
   #it 'test lista con matchers' do

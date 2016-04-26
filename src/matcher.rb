@@ -17,23 +17,22 @@ module Tipo
 end
 
 module Duck_Typing
-  def duck(*mensajes)
-    proc do |un_objeto|
-      lista_mensajes = un_objeto.class.instance_methods(false) | un_objeto.methods
-      mensajes.all? {|mensaje| lista_mensajes.include?(mensaje)}
-    end
+  def duck(*metodos)
+    proc {|un_objeto| metodos.all? { |metodo| un_objeto.methods.include?(metodo)}}
   end
 end
 
 module Lista
   def list(una_lista, *condicion)
-    proc do |otra_lista|
-      if condicion == [true] || condicion == []
-        una_lista.size == otra_lista.size && (otra_lista <=> una_lista) == 0
-      else
-        (otra_lista <=> una_lista) != -1 && (otra_lista <=> una_lista) != nil
-      end
+    if condicion == [true] || condicion == []
+      proc {|otra_lista| una_lista == otra_lista}
+    else
+      proc {|otra_lista| compare_lists(una_lista, otra_lista)}
     end
+  end
+
+  def compare_lists(list_a, list_b)
+    list_a[0, list_b.size] == list_b || list_b[0, list_a.size] == list_a
   end
 end
 
