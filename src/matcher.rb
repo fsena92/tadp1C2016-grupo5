@@ -1,36 +1,45 @@
-module Variable
-  def match(un_atributo)
-    self.atributo = un_atributo
+class Symbol
+  def call(v)
+    true
   end
 end
 
 module Valor
   def val(un_valor)
-    self.atributo == un_valor
+    proc {|v| v == un_valor}
   end
 end
 
 module Tipo
   def type(un_tipo)
-    self.atributo.is_a?(un_tipo)
+    proc {|t| t.is_a?(un_tipo)}
+  end
+end
+
+module Duck_Typing
+  def duck(*mensajes)
+    proc do |un_objeto|
+      lista_mensajes = un_objeto.class.instance_methods(false) | un_objeto.methods
+      mensajes.all? {|mensaje| lista_mensajes.include?(mensaje)}
+    end
   end
 end
 
 module Lista
-  def list(una_lista, *matchear_n)
-    if matchear_n == [true] || matchear_n == []
-      self.atributo.size == una_lista.size && self.atributo == una_lista
-    else
-      (self.atributo <=> una_lista) != -1 && (self.atributo <=> una_lista) != nil
+  def list(una_lista, *condicion)
+    proc do |otra_lista|
+      if condicion == [true] || condicion == []
+        una_lista.size == otra_lista.size && (otra_lista <=> una_lista) == 0
+      else
+        (otra_lista <=> una_lista) != -1 && (otra_lista <=> una_lista) != nil
+      end
     end
   end
-
 end
 
-class Matcher
-  attr_accessor :atributo
+class Object
   include Valor
-  include Variable
   include Tipo
   include Lista
+  include Duck_Typing
 end
