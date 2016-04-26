@@ -63,11 +63,62 @@ describe 'tests_tp_tadp_matcher' do
     end
     a_dragon = Dragon.new
 
-    duck(:cuack, :fly).call(psyduck)
-    duck(:cuack, :fly).call(a_dragon)
-    duck(:fly).call(a_dragon)
-    duck(:to_s).call(Object.new)
+    expect(duck(:cuack, :fly).call(psyduck)).to eq(true)
+    expect(duck(:cuack, :fly).call(a_dragon)).to eq(false)
+    expect(duck(:fly).call(a_dragon)).to eq(true)
+    expect(duck(:to_s).call(Object.new)).to eq(true)
   end
+
+
+  it 'test combinator and' do
+    module Defensor
+    end
+    module Atacante
+    end
+    class Muralla
+      include Defensor
+    end
+    class Guerrero
+      include Defensor
+      include Atacante
+    end
+    expect(type(Defensor).and(type(Atacante)).call(Muralla.new)).to eq(false)
+    expect(type(Defensor).and(type(Atacante)).call(Guerrero.new)).to eq(true)
+    expect(duck(:+).and(type(Fixnum), val(5)).call(5)).to eq(true)
+  end
+
+  it 'test combinator or' do
+    module Defensor
+    end
+    module Atacante
+    end
+    class Muralla
+      include Defensor
+    end
+    class Guerrero
+      include Defensor
+      include Atacante
+    end
+    expect(type(Defensor).or(type(Atacante)).call(Muralla.new)).to eq(true)
+    expect(type(Defensor).or(type(Atacante)).call('un delfin')).to eq(false)
+    expect(duck(:sarlompa).or(type(String), val('sasd')).call(5)).to eq(false)
+  end
+
+  it 'test combinator not' do
+    module Defensor
+    end
+    module Atacante
+    end
+    class Muralla
+      include Defensor
+    end
+    class Misil
+      include Atacante
+    end
+    expect(type(Defensor).not.call(Muralla.new)).to eq(false)
+    expect(type(Defensor).not.call(Misil.new)).to eq(true)
+  end
+
 
 
 

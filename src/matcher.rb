@@ -42,3 +42,21 @@ class Object
   include Lista
   include Duck_Typing
 end
+
+class Proc
+  def and(*otro_proc)
+    proc {|objeto| self.call(objeto) && otro_proc.all? {|r| r.call(objeto)}}
+  end
+
+  def or(*otro_proc)
+    proc {|objeto| self.call(objeto) || otro_proc.any? {|r| r.call(objeto)}}
+  end
+
+  def not
+    proc {|objeto| !self.call(objeto)}
+  end
+end
+
+
+
+
