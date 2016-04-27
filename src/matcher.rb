@@ -48,29 +48,27 @@ class Proc
 end
 
 
-class Objeto
-  attr_accessor :bloque, :matchers ,:aplicar_match
-  def initialize
-    self.aplicar_match = true
-  end
-end
-
 module Matcher
-  attr_accessor :un_objeto
 
-  def with(*matchers, un_bloque)
-    self.un_objeto.bloque = un_bloque
-    self.un_objeto.matchers = matchers
-    #llamar a match y bind
+
+  def with(*matchers, &un_bloque)
+    proc do |*un_objeto|
+      if match(un_objeto, matchers)
+        binding(un_objeto, un_bloque)
+      end
+    end
   end
 
   def otherwise(un_bloque)
-    self.un_objeto.bloque = un_bloque
     #llamar a match y bind
   end
 
-  def match
-    matchers.all? {|p| p.call(self.un_objeto)}
+  def match(objeto, matchers)
+    matchers.all? {|m| m.call(objeto)}
+  end
+
+  def binding(un_objeto, un_bloque)
+
   end
 
 end
