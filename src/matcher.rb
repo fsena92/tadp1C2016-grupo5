@@ -1,5 +1,5 @@
 class Symbol
-  def call(v)
+  def call(valor)
     true
   end
 end
@@ -24,11 +24,8 @@ end
 
 module Lista
   def list(una_lista, *condicion)
-    if condicion == [true] || condicion == []
-      proc {|otra_lista| una_lista == otra_lista}
-    else
-      proc {|otra_lista| compare_lists(una_lista, otra_lista)}
-    end
+    condicion == [true] || condicion == [] ? proc {|otra_lista| una_lista == otra_lista} :
+        proc {|otra_lista| compare_lists(una_lista, otra_lista)}
   end
 
   def compare_lists(list_a, list_b)
@@ -36,20 +33,13 @@ module Lista
   end
 end
 
-class Object
-  include Valor
-  include Tipo
-  include Lista
-  include Duck_Typing
-end
-
 class Proc
-  def and(*otro_proc)
-    proc {|objeto| self.call(objeto) && otro_proc.all? {|r| r.call(objeto)}}
+  def and(*procs)
+    proc {|objeto| self.call(objeto) && procs.all? {|r| r.call(objeto)}}
   end
 
-  def or(*otro_proc)
-    proc {|objeto| self.call(objeto) || otro_proc.any? {|r| r.call(objeto)}}
+  def or(*procs)
+    proc {|objeto| self.call(objeto) || procs.any? {|r| r.call(objeto)}}
   end
 
   def not
@@ -58,5 +48,37 @@ class Proc
 end
 
 
+class Objeto
+  attr_accessor :bloque, :matchers ,:aplicar_match
+  def initialize
+    self.aplicar_match = true
+  end
+end
 
+module Matcher
+  attr_accessor :un_objeto
 
+  def with(*matchers, un_bloque)
+    self.un_objeto.bloque = un_bloque
+    self.un_objeto.matchers = matchers
+    #llamar a match y bind
+  end
+
+  def otherwise(un_bloque)
+    self.un_objeto.bloque = un_bloque
+    #llamar a match y bind
+  end
+
+  def match
+    matchers.all? {|p| p.call(self.un_objeto)}
+  end
+
+end
+
+class Object
+  include Valor
+  include Tipo
+  include Lista
+  include Duck_Typing
+  include Matcher
+end
