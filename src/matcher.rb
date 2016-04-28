@@ -24,13 +24,20 @@ end
 
 module Lista
   def list(una_lista, *condicion)
-    condicion == [true] || condicion == [] ? proc {|otra_lista| una_lista == otra_lista} :
-        proc {|otra_lista| compare_lists(una_lista, otra_lista)}
+    if condicion == [true] || condicion == []
+      proc do |otra_lista|
+        hash = Hash[una_lista.zip(otra_lista)]
+        una_lista.size == otra_lista.size ? hash.all?{|valor, otro_valor| val(valor).call(otro_valor) || valor.call(otro_valor)} : false
+      end
+    else
+      proc {|otra_lista| compare_lists(una_lista, otra_lista)}
+    end
   end
 
   def compare_lists(list_a, list_b)
     list_a[0, list_b.size] == list_b || list_b[0, list_a.size] == list_a
   end
+
 end
 
 class Proc
@@ -47,14 +54,12 @@ class Proc
   end
 end
 
-
 class Object
   include Valor
   include Tipo
   include Lista
   include Duck_Typing
 end
-
 
 class Matcher
   attr_accessor :diccionario, :simbolos, :objeto_matcheable
@@ -101,6 +106,3 @@ c = Matcher.new
 c.objeto_matcheable = 4
 c.with(val(4), duck(:+), :a) {a}
 puts c.diccionario
-
-#c.match(val(4), duck(:+), :a, :b, :variable)
-#puts c.simbolos

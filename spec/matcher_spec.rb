@@ -53,17 +53,26 @@ describe 'tests_tp_tadp_matcher' do
     expect(type(Float).call(10)).to eq(false)
   end
 
-  it 'el test list' do
+  it 'el test list con false' do
     un_array = [1,2,3,4]
-    expect(list([1,2,3,4], true).call(un_array)).to be(true)
     expect(list([1,2,3,4], false).call(un_array)).to be(true)
-    expect(list([1,2,3], true).call(un_array)).to be(false)
     expect(list([1,2,3], false).call(un_array)).to be(true)
-    expect(list([2,1,3,4], true).call(un_array)).to be(false)
     expect(list([2,1,3,4], false).call(un_array)).to eq(false)
-    expect(list([1,2,3]).call(un_array)).to be(false)
     expect(list([1,2,3], false).call([1,2,2,4])).to be(false)
   end
+
+  it 'el test list con true' do
+    un_array = [1,2,3,4]
+    expect(list([1,2,3,4], true).call(un_array)).to be(true)
+    expect(list([1,2,3], true).call(un_array)).to be(false)
+    expect(list([2,1,3,4], true).call(un_array)).to be(false)
+    expect(list([1,2,3]).call(un_array)).to be(false)
+  end
+
+  it 'lista con simbols matchean' do
+    expect(list([:a, :b, :c, :d]).call([1,2,3,4])).to be(true)
+  end
+
 
   it 'test duck typing' do
     psyduck = Object.new
