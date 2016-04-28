@@ -48,35 +48,67 @@ class Proc
 end
 
 
-module Matcher
-
-
-  def with(*matchers, &un_bloque)
-    proc do |*un_objeto|
-      if match(un_objeto, matchers)
-        binding(un_objeto, un_bloque)
-      end
-    end
-  end
-
-  def otherwise(un_bloque)
-    #llamar a match y bind
-  end
-
-  def match(objeto, matchers)
-    matchers.all? {|m| m.call(objeto)}
-  end
-
-  def binding(un_objeto, un_bloque)
-
-  end
-
-end
-
 class Object
   include Valor
   include Tipo
   include Lista
   include Duck_Typing
-  include Matcher
 end
+
+module Matcher
+  attr_accessor :un_objeto, :diccionario
+  def with(*matchers, &un_bloque)
+    #if match(matchers)
+      #binding(un_bloque)
+      self.instance_eval &un_bloque
+    #end
+  end
+  def otherwise(un_bloque)
+    #llamar a match y bind
+  end
+  def match(matchers)
+    matchers.all? {|m| m.call(objeto)}
+  end
+end
+
+
+class Aux
+  attr_accessor :diccionario, :simbolos
+  def initialize
+    self.diccionario = {}
+    self.simbolos = []
+  end
+
+  def with(*matchers, &bloque)
+    instance_eval &bloque
+  end
+
+  def binder(*objeto)
+    i = 0
+    simbolos.each do |s|
+      diccionario[s] = objeto[i]
+      i += 1
+    end
+  end
+
+  #guarda el conjunto de cosas del bloque para ser bindeados
+  def method_missing(sym, *args)
+    self.diccionario[sym] = ''
+  end
+
+  #matchea y guarda los simbolos para bindear en orden con los objetos o el objeto
+  def match(*matchers, un_objeto)
+    matchers.all? {|m| m.call(un_objeto)}
+    self.simbolos += matchers.select {|m| m.is_a? Symbol}
+  end
+end
+
+c = Aux.new
+c.with(1,2,4) {a + b + variable}
+puts c.diccionario
+
+c.match(val(4), duck(:+), :a, :b, :variable, 4)
+c.binder(1,2,4)
+puts c.diccionario
+
+#puts c.simbolos
