@@ -75,6 +75,9 @@ describe 'tests_tp_tadp_matcher' do
     expect(list([:a, :b, :c, :d], false).call([1,2,3,4,5])).to eq(true)
   end
 
+  it 'matcher de lista con diferentes matchers ' do
+    expect(list([:b, val(2), duck(:+)]).call([1,2,3])).to eq(true)
+  end
 
   it 'test duck typing' do
     psyduck = Object.new

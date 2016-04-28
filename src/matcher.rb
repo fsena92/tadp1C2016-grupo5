@@ -37,7 +37,9 @@ module Lista
   end
 
   def comparar_listas(hash)
-    hash.all?{|valor, otro_valor| valor.is_a?(Symbol) ? valor.call(otro_valor) : val(valor).call(otro_valor) }
+    hash.all? do |valor, otro_valor|
+      valor.class == Symbol || valor.class == Proc ? valor.call(otro_valor) : val(valor).call(otro_valor)
+    end
   end
 
 end
@@ -104,11 +106,16 @@ class Matcher
 
 end
 
-puts list([:a, :b, :c, :d], false).call([1,2,3,4,5])
 
 
+#puts list([:a, :b, :c, :d], false).call([1,2,3,4,5])
 
-c = Matcher.new
-c.objeto_matcheable = 4
-puts c.with(val(4), duck(:+), :a) {a}
+#a = Matcher.new
+#a.objeto_matcheable = [1,2,3]
+#puts a.with(list([:b, val(2), duck(:+)])) { b + 2 }
+#puts a.diccionario
+
+#c = Matcher.new
+#c.objeto_matcheable = 4
+#c.with(val(4), duck(:+), :a) {a}
 #puts c.diccionario
