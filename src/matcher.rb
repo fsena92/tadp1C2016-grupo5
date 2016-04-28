@@ -75,11 +75,11 @@ class Matcher
     if match(matchers)
       instance_eval &bloque
       bindear(objeto_matcheable)
-      #hacer que evalue el bloque
+      self.instance_eval &bloque
     end
   end
 
-  def other(&bloque)
+  def other_wise(&bloque)
     instance_eval &bloque
   end
 
@@ -93,7 +93,7 @@ class Matcher
 
   #guarda el conjunto de cosas del bloque para ser bindeados
   def method_missing(sym, *args)
-    self.diccionario[sym] = ''
+    self.diccionario[sym]
   end
 
   #matchea y guarda los simbolos para bindear en orden con los objetos o el objeto
@@ -110,5 +110,5 @@ puts list([:a, :b, :c, :d], false).call([1,2,3,4,5])
 
 c = Matcher.new
 c.objeto_matcheable = 4
-c.with(val(4), duck(:+), :a) {a}
-puts c.diccionario
+puts c.with(val(4), duck(:+), :a) {a}
+#puts c.diccionario
