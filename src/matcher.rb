@@ -1,121 +1,206 @@
+class MatcherBase
+
+  def call(un_valor)
+
+  end
+
+  def and(*matchers)
+    MatcherAndCombinator.new(self, *matchers)
+  end
+
+  def or(*matchers)
+    MatcherOrCombinator.new(self, *matchers)
+  end
+
+  def not(*matchers)
+    MatcherNotCombinator.new(self)
+  end
+
+end
+
+
+class MatcherAndCombinator < MatcherBase
+
+  def initialize(un_matcher, *matchers)
+    @un_matcher = un_matcher
+    @matchers = matchers
+  end
+
+  def call(un_objeto)
+    @un_matcher.call(un_objeto) && @matchers.all? {|otro_matcher| otro_matcher.call(un_objeto)}
+  end
+
+end
+
+
+class MatcherOrCombinator < MatcherBase
+
+  def initialize(un_matcher, *matchers)
+    @un_matcher = un_matcher
+    @matchers = matchers
+  end
+
+  def call(un_objeto)
+    @un_matcher.call(un_objeto) || @matchers.any? {|otro_matcher| otro_matcher.call(un_objeto)}
+  end
+
+end
+
+
+class MatcherNotCombinator < MatcherBase
+
+  def initialize(un_matcher)
+    @un_matcher = un_matcher
+  end
+
+  def call(un_objeto)
+    !@un_matcher.call(un_objeto)
+  end
+
+end
+
+
+class MatcherVal < MatcherBase
+
+  def initialize(un_valor)
+    @valor = un_valor
+  end
+
+  def call(un_valor)
+    @valor == un_valor
+  end
+
+end
+
+
+class MatcherType < MatcherBase
+
+  def initialize(un_tipo)
+    @tipo = un_tipo
+  end
+
+  def call(un_objeto)
+    un_objeto.is_a?(@tipo)
+  end
+
+end
+
+
+class MatcherDuckTyping < MatcherBase
+
+  def initialize(*metodos)
+    @metodos = metodos
+  end
+
+  def call(un_objeto)
+    @metodos.all? {|un_metodo| un_objeto.methods.include?(un_metodo)}
+  end
+
+end
+
+
+class MatcherList < MatcherBase
+
+  def initialize(una_lista, *condicion)
+    @una_lista = una_lista
+    @una_condicion = condicion
+  end
+
+  private def esMatcher(un_objeto)
+    un_objeto.class.ancestors.include?(MatcherBase)
+  end
+
+  private def comparar_listas(hash)
+    hash.all? do |valor, otro_valor|
+      valor.class == Symbol || esMatcher(valor) ? valor.call(otro_valor) : val(valor).call(otro_valor)
+    end
+  end
+
+  def call(otra_lista)
+    if @una_condicion == [true] || @una_condicion == []
+      hash = Hash[@una_lista.zip(otra_lista)]
+      @una_lista.size == otra_lista.size ?  comparar_listas(hash) : false
+    else
+      comparar_listas(Hash[@una_lista.zip(otra_lista)])
+    end
+  end
+
+end
+
+
 class Symbol
+
   def call(valor)
     true
   end
-end
 
-module Valor
-  def val(un_valor)
-    proc {|v| v == un_valor}
-  end
-end
-
-module Tipo
-  def type(un_tipo)
-    proc {|t| t.is_a?(un_tipo)}
-  end
-end
-
-module Duck_Typing
-  def duck(*metodos)
-    proc {|un_objeto| metodos.all? { |metodo| un_objeto.methods.include?(metodo)}}
-  end
-end
-
-module Lista
-  def list(una_lista, *condicion)
-    if condicion == [true] || condicion == []
-      proc do |otra_lista|
-        hash = Hash[una_lista.zip(otra_lista)]
-        una_lista.size == otra_lista.size ?  comparar_listas(hash) : false
-      end
-    else
-      proc do |otra_lista|
-        comparar_listas(Hash[una_lista.zip(otra_lista)])
-      end
-    end
+  def and(*matchers)
+    MatcherAndCombinator.new(self, *matchers)
   end
 
-  def comparar_listas(hash)
-    hash.all? do |valor, otro_valor|
-      valor.class == Symbol || valor.class == Proc ? valor.call(otro_valor) : val(valor).call(otro_valor)
-    end
+  def or(*matchers)
+    MatcherOrCombinator.new(self, *matchers)
+  end
+
+  def not(*matchers)
+    MatcherNotCombinator.new(self)
   end
 
 end
 
-class Proc
-  def and(*procs)
-    proc {|objeto| self.call(objeto) && procs.all? {|r| r.call(objeto)}}
-  end
-
-  def or(*procs)
-    proc {|objeto| self.call(objeto) || procs.any? {|r| r.call(objeto)}}
-  end
-
-  def not
-    proc {|objeto| !self.call(objeto)}
-  end
-end
 
 class Object
-  include Valor
-  include Tipo
-  include Lista
-  include Duck_Typing
-end
 
-class Matcher
-  attr_accessor :diccionario, :simbolos, :objeto_matcheable
-  def initialize
-    self.diccionario = {}
-    self.simbolos = []
+  def val(un_valor)
+    MatcherVal.new(un_valor)
   end
 
-  # si matchea evalua el bloque
+  def type(un_tipo)
+    MatcherType.new(un_tipo)
+  end
+
+  def duck(*metodos)
+    MatcherDuckTyping.new(*metodos)
+  end
+
+  def list(una_lista, *condicion)
+    MatcherList.new(una_lista, *condicion)
+  end
+
+end
+
+
+class MatcherTest
+
+  attr_accessor :diccionario, :objeto_matcheable
+
+  def initialize
+    self.diccionario = {}
+  end
+
   def with(*matchers, &bloque)
-    if match(matchers)
-      instance_eval &bloque
-      bindear(objeto_matcheable)
+    if match(*matchers)
+      bindear(*matchers)
       self.instance_eval &bloque
     end
   end
 
   def other_wise(&bloque)
-    instance_eval &bloque
+    self.instance_eval &bloque
   end
 
   def bindear(*objeto)
-    i = 0
-    simbolos.each do |s|
-      diccionario[s] = objeto[i]
-      i += 1
-    end
+
   end
 
-  #guarda el conjunto de cosas del bloque para ser bindeados
   def method_missing(sym, *args)
     self.diccionario[sym]
   end
 
-  #matchea y guarda los simbolos para bindear en orden con los objetos o el objeto
   def match(matchers)
-    matchers.all? {|m| m.call(objeto_matcheable)}
-    self.simbolos += matchers.select {|m| m.is_a? Symbol}
+    matchers.all? {|un_matcher| un_matcher.call(objeto_matcheable)}
   end
 
 end
 
 
-
-#puts list([:a, :b, :c, :d], false).call([1,2,3,4,5])
-
-#a = Matcher.new
-#a.objeto_matcheable = [1,2,3]
-#puts a.with(list([:b, val(2), duck(:+)])) { b + 2 }
-#puts a.diccionario
-
-#c = Matcher.new
-#c.objeto_matcheable = 4
-#c.with(val(4), duck(:+), :a) {a}
-#puts c.diccionario

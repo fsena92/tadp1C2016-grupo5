@@ -29,10 +29,6 @@ describe 'tests_tp_tadp_matcher' do
     end
   end
 
-
-
-
-
   it 'test matcher variable' do
     expect(:a_variable_name.call('nombre')).to be(true)
   end
@@ -51,6 +47,48 @@ describe 'tests_tp_tadp_matcher' do
 
   it 'test no matchea el tipo' do
     expect(type(Float).call(10)).to eq(false)
+  end
+
+  it 'test duck typing' do
+    psyduck = Object.new
+    def psyduck.cuack
+      'psy..duck?'
+    end
+    def psyduck.fly
+      '(headache)'
+    end
+
+    a_dragon = Dragon.new
+
+    expect(duck(:cuack, :fly).call(psyduck)).to eq(true)
+    expect(duck(:cuack, :fly).call(a_dragon)).to eq(false)
+    expect(duck(:fly).call(a_dragon)).to eq(true)
+    expect(duck(:to_s).call(Object.new)).to eq(true)
+  end
+
+  it 'test combinator and' do
+    expect(type(Defensor).and(type(Atacante)).call(Muralla.new)).to eq(false)
+    expect(type(Defensor).and(type(Atacante)).call(Guerrero.new)).to eq(true)
+    expect(duck(:+).and(type(Fixnum), val(5)).call(5)).to eq(true)
+  end
+
+  it 'test combinator or' do
+    expect(type(Defensor).or(type(Atacante)).call(Muralla.new)).to eq(true)
+    expect(type(Defensor).or(type(Atacante)).call('un delfin')).to eq(false)
+    expect(duck(:sarlompa).or(type(String), val('sasd')).call(5)).to eq(false)
+  end
+
+  it 'test combinator not' do
+    expect(type(Defensor).not.call(Muralla.new)).to eq(false)
+    expect(type(Defensor).not.call(Misil.new)).to eq(true)
+  end
+
+  it 'test combinator symbol' do
+    expect(:y.and(type(Fixnum)).call(5)).to eq(true)
+  end
+
+  it 'test combinator varios' do
+    expect(:y.and(:a.or(duck(:+).not(val('nada')), val(5), type(Fixnum).not(type(Class)))).call(5)).to eq(true)
   end
 
   it 'el test list con false' do
@@ -78,45 +116,6 @@ describe 'tests_tp_tadp_matcher' do
   it 'matcher de lista con diferentes matchers ' do
     expect(list([:b, val(2), duck(:+)]).call([1,2,3])).to eq(true)
   end
-
-  it 'test duck typing' do
-    psyduck = Object.new
-    def psyduck.cuack
-      'psy..duck?'
-    end
-    def psyduck.fly
-      '(headache)'
-    end
-
-    a_dragon = Dragon.new
-
-    expect(duck(:cuack, :fly).call(psyduck)).to eq(true)
-    expect(duck(:cuack, :fly).call(a_dragon)).to eq(false)
-    expect(duck(:fly).call(a_dragon)).to eq(true)
-    expect(duck(:to_s).call(Object.new)).to eq(true)
-  end
-
-
-  it 'test combinator and' do
-    expect(type(Defensor).and(type(Atacante)).call(Muralla.new)).to eq(false)
-    expect(type(Defensor).and(type(Atacante)).call(Guerrero.new)).to eq(true)
-    expect(duck(:+).and(type(Fixnum), val(5)).call(5)).to eq(true)
-  end
-
-  it 'test combinator or' do
-    expect(type(Defensor).or(type(Atacante)).call(Muralla.new)).to eq(true)
-    expect(type(Defensor).or(type(Atacante)).call('un delfin')).to eq(false)
-    expect(duck(:sarlompa).or(type(String), val('sasd')).call(5)).to eq(false)
-  end
-
-  it 'test combinator not' do
-    expect(type(Defensor).not.call(Muralla.new)).to eq(false)
-    expect(type(Defensor).not.call(Misil.new)).to eq(true)
-  end
-
-
-
-
 
 
 end
