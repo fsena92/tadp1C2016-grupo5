@@ -71,6 +71,8 @@ describe 'tests_tp_tadp_matcher' do
 
   it 'lista con simbols matchean' do
     expect(list([:a, :b, :c, :d]).call([1,2,3,4])).to be(true)
+    expect(list([:a, :b]).call([1,2,3])).to be(false)
+    expect(list([:a, :b, :c, :d], false).call([1,2,3,4,5])).to eq(true)
   end
 
 

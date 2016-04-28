@@ -27,15 +27,17 @@ module Lista
     if condicion == [true] || condicion == []
       proc do |otra_lista|
         hash = Hash[una_lista.zip(otra_lista)]
-        una_lista.size == otra_lista.size ? hash.all?{|valor, otro_valor| val(valor).call(otro_valor) || valor.call(otro_valor)} : false
+        una_lista.size == otra_lista.size ?  comparar_listas(hash) : false
       end
     else
-      proc {|otra_lista| compare_lists(una_lista, otra_lista)}
+      proc do |otra_lista|
+        comparar_listas(Hash[una_lista.zip(otra_lista)])
+      end
     end
   end
 
-  def compare_lists(list_a, list_b)
-    list_a[0, list_b.size] == list_b || list_b[0, list_a.size] == list_a
+  def comparar_listas(hash)
+    hash.all?{|valor, otro_valor| valor.is_a?(Symbol) ? valor.call(otro_valor) : val(valor).call(otro_valor) }
   end
 
 end
@@ -101,6 +103,10 @@ class Matcher
   end
 
 end
+
+puts list([:a, :b, :c, :d], false).call([1,2,3,4,5])
+
+
 
 c = Matcher.new
 c.objeto_matcheable = 4
