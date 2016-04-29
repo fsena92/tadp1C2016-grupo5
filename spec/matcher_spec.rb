@@ -29,6 +29,8 @@ describe 'tests_tp_tadp_matcher' do
     end
   end
 
+  pattern = Pattern.new
+
   it 'test matcher variable' do
     expect(:a_variable_name.call('nombre')).to be(true)
   end
@@ -64,6 +66,7 @@ describe 'tests_tp_tadp_matcher' do
     expect(duck(:cuack, :fly).call(a_dragon)).to eq(false)
     expect(duck(:fly).call(a_dragon)).to eq(true)
     expect(duck(:to_s).call(Object.new)).to eq(true)
+    expect(duck(:+).call(10)).to be(true)
   end
 
   it 'test combinator and' do
@@ -116,6 +119,35 @@ describe 'tests_tp_tadp_matcher' do
   it 'matcher de lista con diferentes matchers ' do
     expect(list([:b, val(2), duck(:+)]).call([1,2,3])).to eq(true)
   end
+
+  it 'test matchea un string con matchers diferentes' do
+    pattern.objeto_matcheable = 'hola'
+    expect(pattern.match([type(String), :a_string, val('hola')])).to be(true)
+  end
+
+  it 'test matchea un valor con matchers diferentes' do
+    pattern.objeto_matcheable = 10
+    expect(pattern.match([type(Fixnum), :un_valor, val(10), duck(:+)])).to be(true)
+  end
+
+  it 'test matchea una lista de matchers simples y compuestos por lists' do
+    pattern.objeto_matcheable = [1,2]
+    expect(pattern.match([list([1, 2])])).to be(true)
+    expect(pattern.match([list([:a, :b])])).to be(true)
+    expect(pattern.match([list([:a, :b]), list([1, 2]), list([val(1), val(2)])])).to be(true)
+  end
+
+  it 'test matchea una lista con ' do
+    pattern.objeto_matcheable = [1,2,Object.new]
+    expect((duck(:+).and(type(Fixnum), :x)).call(1)).to eq(true)
+    expect((:y.or(val(4))).call(2)).to eq(true)
+    expect((duck(:+).not).call(Object.new)).to eq(true)
+    expect(pattern.match([list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])])).to be(true)
+  end
+
+  
+
+
 
 
 end

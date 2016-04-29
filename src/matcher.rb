@@ -19,7 +19,6 @@ class Object
 end
 
 
-
 module Combinator
   def and(*matchers)
     MatcherAndCombinator.new(self, *matchers)
@@ -148,7 +147,7 @@ class MatcherList < Matcher
 end
 
 
-class MatcherTest
+class Pattern
   attr_accessor :diccionario, :objeto_matcheable
 
   def initialize
