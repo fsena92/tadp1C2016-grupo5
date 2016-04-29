@@ -145,6 +145,8 @@ describe 'tests_tp_tadp_matcher' do
     expect(pattern.match([list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])])).to be(true)
   end
 
+
+
   
 
 

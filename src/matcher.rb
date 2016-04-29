@@ -45,9 +45,11 @@ class Symbol
     true
   end
 
-  def obtener_simbolos
-    [self]
+
+  def bindear(un_objeto, diccionario)
+    diccionario[self] = un_objeto
   end
+
 
 end
 
@@ -63,9 +65,12 @@ class MatcherAndCombinator < Matcher
     self.un_matcher.call(un_objeto) && self.matchers.all? {|otro_matcher| otro_matcher.call(un_objeto)}
   end
 
-  def obtener_simbolos
-    otros_matchers = self.matchers.map {|m| m.obtener_simbolos}
-    self.un_matcher.obtener_simbolos + otros_matchers
+
+  def bindear(un_objeto, diccionario)
+    un_matcher.bindear(un_objeto, diccionario)
+    matchers.each do |matcher|
+      matcher.bindear(un_objeto, diccionario)
+    end
   end
 
 end
@@ -83,9 +88,12 @@ class MatcherOrCombinator < Matcher
     self.un_matcher.call(un_objeto) || self.matchers.any? {|otro_matcher| otro_matcher.call(un_objeto)}
   end
 
-  def obtener_simbolos
-    otros_matchers = self.matchers.map {|m| m.obtener_simbolos}
-    self.un_matcher.obtener_simbolos + otros_matchers
+
+  def bindear(un_objeto, diccionario)
+    un_matcher.bindear(un_objeto, diccionario)
+    matchers.each do |matcher|
+      matcher.bindear(un_objeto, diccionario)
+    end
   end
 
 end
@@ -102,8 +110,9 @@ class MatcherNotCombinator < Matcher
     !self.matcher.call(un_objeto)
   end
 
-  def obtener_simbolos
-    self.matcher.obtener_simbolos
+
+  def bindear(un_objeto, diccionario)
+    matcher.bindear(un_objeto, diccionario)
   end
 
 end
@@ -119,8 +128,9 @@ class MatcherVal < Matcher
     @valor == un_valor
   end
 
-  def obtener_simbolos
-    @valor.class == Symbol ? [@valor] : []
+
+  def bindear(un_objeto, diccionario)
+    #nada
   end
 
 end
@@ -138,9 +148,11 @@ class MatcherType < Matcher
     un_objeto.is_a? self.tipo
   end
 
-  def obtener_simbolos
-    self.tipo.class == Symbol ? [self.tipo] : []
+
+  def bindear(un_objeto, diccionario)
+    #nada
   end
+
 end
 
 
@@ -156,8 +168,9 @@ class MatcherDuckTyping < Matcher
     self.metodos.all? {|un_metodo| un_objeto.methods.include?(un_metodo)}
   end
 
-  def obtener_simbolos
-    self.metodos.select {|metodo| metodo.class == Symbol}
+
+  def bindear(un_objeto, diccionario)
+    #nada
   end
 
 end
@@ -176,7 +189,7 @@ class MatcherList < Matcher
 
   private def comparar_listas(hash)
     hash.all? do |valor, otro_valor|
-      valor.class == Symbol || es_matcher(valor) ? valor.call(otro_valor) : val(valor).call(otro_valor)
+      valor.is_a?(Symbol) || es_matcher(valor) ? valor.call(otro_valor) : val(valor).call(otro_valor)
     end
   end
 
@@ -189,24 +202,31 @@ class MatcherList < Matcher
     end
   end
 
-  def obtener_simbolos
-    @una_lista.map {|matcher| matcher.obtener_simbolos}
-  end
+
+  def bindear(un_objeto, diccionario)
+    i = 0
+    @una_lista.each do |elem|
+      if elem.methods.include?(:bindear)
+        elem.bindear(un_objeto[i], diccionario)
+      end
+        i+= 1
+      end
+    end
 
 end
 
 class Pattern
-  attr_accessor :diccionario, :objeto_matcheable, :list_bindeables
+  attr_accessor :diccionario, :objeto_matcheable
 
   def initialize
     self.diccionario = {}
-    self.list_bindeables = []
   end
+
 
   def with(*matchers, &bloque)
     if match(matchers)
-      self.instance_eval &bloque
       bindear(matchers)
+      self.instance_eval &bloque
     end
   end
 
@@ -216,14 +236,14 @@ class Pattern
 
   def bindear(matchers)
     matchers.each do |matcher|
-      self.list_bindeables += matcher.obtener_simbolos
+      matcher.bindear(objeto_matcheable,diccionario)
     end
 
 
   end
 
   def method_missing(sym, *args)
-    self.diccionario[sym] = ''
+    self.diccionario[sym]
   end
 
   def match(matchers)
@@ -231,12 +251,15 @@ class Pattern
   end
 end
 
+
+
+
 p = Pattern.new
 
-p.objeto_matcheable = 'hola'
-p.with(type(String), :a_string) { a_string.length }
-puts p.list_bindeables
-puts p.diccionario
+#p.objeto_matcheable = 'hola'
+#p.with(type(String), :a_string) { a_string.length }
+#puts p.list_bindeables
+#puts p.diccionario
 
 
 #p.objeto_matcheable = [1,2, Object.new]
@@ -247,7 +270,18 @@ puts p.diccionario
 #puts p.with(:a, :b) {a + b}
 #puts p.diccionario
 
-#p.objeto_matcheable = 25
-#p.with(type(Integer), :size) { size }
+p.objeto_matcheable = [2,4]
+#p.with(type(Integer), :size, :a) { size }
 #puts p.list_bindeables
-#puts p.diccionario
+
+
+#puts (val(2).and(duck(:+),:b)).obtener_simbolos
+#puts (type(String).and(:a_string)).obtener_simbolos
+#puts (list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])).obtener_simbolos
+#puts (duck(:hola)).obtener_simbolos
+
+#puts p.with(list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])) { x + y }
+
+puts p.with(:y.and(list(val(2),:b))) {y }
+puts p.diccionario
+
