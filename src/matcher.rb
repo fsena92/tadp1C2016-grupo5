@@ -1,5 +1,7 @@
 class Object
 
+  attr_accessor :un_objeto
+
   def val(un_valor)
     MatcherVal.new(un_valor)
   end
@@ -16,10 +18,24 @@ class Object
     MatcherList.new(una_lista, *condicion)
   end
 
+  def matches?(un_objeto,&bloque)
+    self.un_objeto = un_objeto
+    self.instance_eval(&bloque)
+  end
+
+  def method_missing(sym,*arg)
+    if(sym.to_s == 'with')
+      p = Pattern.new
+      p.objeto_matcheable = un_objeto
+      p.with(arg)
+    end
+  end
+
 end
 
 
 module Combinator
+
   def and(*matchers)
     MatcherAndCombinator.new(self, *matchers)
   end
@@ -254,7 +270,7 @@ end
 
 
 
-p = Pattern.new
+#p = Pattern.new
 
 #p.objeto_matcheable = 'hola'
 #p.with(type(String), :a_string) { a_string.length }
@@ -270,7 +286,7 @@ p = Pattern.new
 #puts p.with(:a, :b) {a + b}
 #puts p.diccionario
 
-p.objeto_matcheable = [2,4]
+#p.objeto_matcheable = [2,4]
 #p.with(type(Integer), :size, :a) { size }
 #puts p.list_bindeables
 
@@ -282,6 +298,14 @@ p.objeto_matcheable = [2,4]
 
 #puts p.with(list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])) { x + y }
 
-puts p.with(:y.and(list(val(2),:b))) {y }
-puts p.diccionario
+#puts p.with(:y.and(list(val(2),:b))) {y }
+
+x = [1, 2, 3]
+matches?(x) do
+    with(list([:a, val(2), duck(:+)])) { a + 2 }
+   #with(list([1, 2, 3])) { 'acá no llego' }
+  #otherwise { 'acá no llego' }
+end
+
+#puts p.diccionario
 
