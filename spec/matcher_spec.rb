@@ -88,7 +88,7 @@ describe 'tests_tp_tadp_matcher' do
   end
 
   it 'test combinator varios' do
-    expect(:y.and(:a.or(duck(:+).not(val('nada')), val(5), type(Fixnum).not(type(Class)))).call(5)).to eq(true)
+    expect(:y.and(:a.or(duck(:+).not, val(5), type(Fixnum).not)).call(5)).to eq(true)
   end
 
   it 'el test list con false' do
