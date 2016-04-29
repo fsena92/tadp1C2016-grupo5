@@ -175,6 +175,11 @@ describe 'tests_tp_tadp_matcher' do
     expect(pattern.with(duck(:hola)) { 'chau!' }).to eq('chau!')
   end
 
+  it 'test Pattern matcher de variable con lista' do
+    pattern.objeto_matcheable = [2,4]
+    expect(pattern.with(:y.and(list([val(2),:b]))) {y.size + b}).to eq(6)
+  end
+
 
 
 end
