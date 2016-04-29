@@ -1,6 +1,6 @@
 class Object
 
-  attr_accessor :un_objeto
+  attr_accessor :un_objeto, :bloqueWith
 
   def val(un_valor)
     MatcherVal.new(un_valor)
@@ -20,16 +20,19 @@ class Object
 
   def matches?(un_objeto,&bloque)
     self.un_objeto = un_objeto
+    self.bloqueWith = bloque
     self.instance_eval(&bloque)
   end
 
   def method_missing(sym,*arg)
-    if(sym.to_s == 'with')
+    if sym.to_s == 'with'
       p = Pattern.new
       p.objeto_matcheable = un_objeto
-      p.with(arg)
+      un_proc = proc {a+b}
+      arg.pop
+      puts p.with(arg) &un_proc
     end
-  end
+ end
 
 end
 
@@ -286,7 +289,7 @@ end
 #puts p.with(:a, :b) {a + b}
 #puts p.diccionario
 
-#p.objeto_matcheable = [2,4]
+#p.objeto_matcheable = [2,4,Object.new]
 #p.with(type(Integer), :size, :a) { size }
 #puts p.list_bindeables
 
@@ -302,7 +305,7 @@ end
 
 x = [1, 2, 3]
 matches?(x) do
-    with(list([:a, val(2), duck(:+)])) { a + 2 }
+   puts with(list([:a, val(2), duck(:+)]) ) {a+2}
    #with(list([1, 2, 3])) { 'acá no llego' }
   #otherwise { 'acá no llego' }
 end

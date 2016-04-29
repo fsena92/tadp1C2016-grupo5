@@ -145,10 +145,35 @@ describe 'tests_tp_tadp_matcher' do
     expect(pattern.match([list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])])).to be(true)
   end
 
+  it 'test Patterns con type y variables con cadena' do
+    pattern.objeto_matcheable = 'hola'
+    expect(pattern.with(type(String), :a_string) { a_string.length }).to eq(4)
+    pattern.objeto_matcheable = 10
+    expect(pattern.with(type(Integer), :size) { size }).to eq(10)
+  end
 
 
-  
+  it 'test Patterns con listas y with con [1,2]' do
+    pattern.objeto_matcheable = [1,2]
+    expect(pattern.with(list([:a, :b])) { a + b } ).to eq(3)
+  end
 
+  it 'test Patterns con listas de matchers con [1,2,Objeto]' do
+    pattern.objeto_matcheable = [1,2,Object.new]
+    expect(pattern.with(list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])) { x + y }).to eq(3)
+  end
+
+  it 'test Patterns con lista [1,2,3]' do
+    pattern.objeto_matcheable = [1,2,3]
+    expect(pattern.with(list([:a, val(2), duck(:+)])) { a + 2 }).to eq(3)
+  end
+
+  it 'test Patterns con envio de mensaje a un objeto ' do
+    x = Object.new
+    x.send(:define_singleton_method, :hola) { 'hola' }
+    pattern.objeto_matcheable = x
+    expect(pattern.with(duck(:hola)) { 'chau!' }).to eq('chau!')
+  end
 
 
 
