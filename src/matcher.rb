@@ -6,7 +6,7 @@ class Object
   end
 
   def type(un_tipo)
-    Matchert_ype.new(un_tipo)
+    Matcher_type.new(un_tipo)
   end
 
   def duck(*metodos)
@@ -23,13 +23,11 @@ class Object
     self.instance_eval(&bloque)
   end
 
-  def method_missing(sym,*arg)
+  def method_missing(sym, *arg)
     if sym.to_s == 'with'
       p = Pattern.new
       p.objeto_matcheable = un_objeto
-      un_proc = proc {a+b}
-      arg.pop
-      puts p.with(arg) &un_proc
+      p.sym(*arg) {a + b}
     end
  end
 
@@ -134,9 +132,12 @@ class Matcher_val < Matcher
   def call(un_valor)
     @valor == un_valor
   end
+
+  def bindear(un_objeto, diccionario)
+  end
 end
 
-class Matchert_ype < Matcher
+class Matcher_type < Matcher
   attr_accessor :tipo
 
   def initialize(un_tipo)
@@ -145,6 +146,9 @@ class Matchert_ype < Matcher
 
   def call(un_objeto)
     un_objeto.is_a? self.tipo
+  end
+
+  def bindear(un_objeto, diccionario)
   end
 end
 
@@ -157,6 +161,9 @@ class Matcher_duck_typing < Matcher
 
   def call(un_objeto)
     self.metodos.all? {|un_metodo| un_objeto.methods.include?(un_metodo)}
+  end
+
+  def bindear(un_objeto, diccionario)
   end
 end
 
@@ -234,13 +241,13 @@ class Pattern
 end
 
 
-
 x = [1, 2, 3]
 matches?(x) do
-   puts with(list([:a, val(2), duck(:+)]) ) {a+2}
-   #with(list([1, 2, 3])) { 'acá no llego' }
+  puts with(list([:a, val(2), duck(:+)])) {a + 2}
+  #with(list([1, 2, 3])) { 'acá no llego' }
   #otherwise { 'acá no llego' }
 end
+
 
 
 
