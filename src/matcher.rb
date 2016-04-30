@@ -23,12 +23,14 @@ class Object
     self.instance_eval(&bloque)
   end
 
-  def method_missing(sym, *arg)
+  def method_missing(sym, *arg,&bloque)
+
     if sym.to_s == 'with'
       p = Pattern.new
       p.objeto_matcheable = un_objeto
-      p.sym(*arg) {a + b}
+      p.with(*arg,&bloque)
     end
+
  end
 
 end
