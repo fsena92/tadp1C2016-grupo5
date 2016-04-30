@@ -1,5 +1,5 @@
 class Object
-  attr_accessor :un_objeto, :bloqueWith
+  attr_accessor :un_objeto
 
   def val(un_valor)
     Matcher_val.new(un_valor)
@@ -19,16 +19,19 @@ class Object
 
   def matches?(un_objeto,&bloque)
     self.un_objeto = un_objeto
-    self.bloqueWith = bloque
     self.instance_eval(&bloque)
   end
 
   def method_missing(sym, *arg,&bloque)
 
+    p = Pattern.new
+    p.objeto_matcheable = un_objeto
+
     if sym.to_s == 'with'
-      p = Pattern.new
-      p.objeto_matcheable = un_objeto
       p.with(*arg,&bloque)
+
+    elsif sym.to_s == 'otherwise'
+      p.other_wise(&bloque)
     end
 
  end
@@ -220,6 +223,7 @@ class Pattern
     if match(matchers)
       bindear(matchers)
       self.instance_eval &bloque
+      exit
     end
   end
 
@@ -243,12 +247,6 @@ class Pattern
 end
 
 
-x = [1, 2, 3]
-matches?(x) do
-  puts with(list([:a, val(2), duck(:+)])) {a + 2}
-  #with(list([1, 2, 3])) { 'acá no llego' }
-  #otherwise { 'acá no llego' }
-end
 
 
 
