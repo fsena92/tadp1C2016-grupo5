@@ -180,27 +180,37 @@ describe 'tests_tp_tadp_matcher' do
     expect(pattern.with(:y.and(list([val(2),:b]))) {y.size + b}).to eq(6)
   end
 
+
+
+  # arreglar el corte
+
   it 'test Matches corta en el otherwise' do
-
     x = 2
-    expect(matches?(x) do
-      with(list([:a, val(2), duck(:+)])) {a + 2}
-      with(list([1, 2, 3])) { 'acá no llego' }
-      otherwise { 'acá no llego' }
-    end).to be('acá no llego')
-
+    matches?(x) do
+      expect(with(list([:a, val(2), duck(:+)])) {a + 2}).to eq(nil)
+      expect(with(list([1, 2, 3])) { 'acá no llego' }).to eq(nil)
+      expect(otherwise { 'acá no llego' }).to eq('acá no llego')
+    end
   end
 
+  it 'test Matches matchea en el primer with' do
+    x = [1,2,3]
+    matches?(x) do
+      expect(with(list([:a, val(2), duck(:+)])) {a + 2}).to eq(3)
+      expect(with(list([1, 2, 3])) { 'acá no llego' }).to eq('acá no llego')
+      expect(otherwise { 'acá no llego' }).to eq('acá no llego')
+    end
+  end
 
   it 'test Matches ' do
 
     x = Object.new
     x.send(:define_singleton_method, :hola) { 'hola' }
 
-    expect(matches?(x) do
-      with(duck(:hola)) { 'chau!' }
-      with(type(Object)) { 'acá no llego' }
-    end).to eq ('chau!')
+    matches?(x) do
+      expect(with(duck(:hola)) { 'chau!' }).to eq('chau!')
+      expect(with(type(Object)) { 'acá no llego' }).to eq('acá no llego')
+    end
 
   end
 

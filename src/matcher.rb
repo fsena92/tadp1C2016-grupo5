@@ -223,7 +223,7 @@ class Pattern
     if match(matchers)
       bindear(matchers)
       self.instance_eval &bloque
-      exit
+     # exit
     end
   end
 
