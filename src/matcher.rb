@@ -1,6 +1,4 @@
-class Object
-  attr_accessor :un_objeto
-
+module Matcheadores
   def val(un_valor)
     Matcher_val.new(un_valor)
   end
@@ -16,30 +14,19 @@ class Object
   def list(una_lista, *condicion)
     Matcher_list.new(una_lista, *condicion)
   end
-
-  def matches?(un_objeto,&bloque)
-    self.un_objeto = un_objeto
-    self.instance_eval(&bloque)
-  end
-
-  def method_missing(sym, *arg,&bloque)
-
-    p = Pattern.new
-    p.objeto_matcheable = un_objeto
-
-    if sym.to_s == 'with'
-      p.with(*arg,&bloque)
-
-    elsif sym.to_s == 'otherwise'
-      p.other_wise(&bloque)
-    end
-
- end
-
 end
 
-module Combinator
+class Object
+  include Matcheadores
 
+  def matches?(un_objeto, &bloque)
+    pattern = Pattern.new(un_objeto)
+    pattern.instance_eval &bloque
+    pattern.matchear
+  end
+end
+
+module Matcher
   def and(*matchers)
     Matcher_and_combinator.new(self, *matchers)
   end
@@ -51,14 +38,13 @@ module Combinator
   def not
     Matcher_not_combinator.new(self)
   end
-end
 
-class Matcher
-  include Combinator
+  def bindear(un_objeto, diccionario)
+  end
 end
 
 class Symbol
-  include Combinator
+  include Matcher
 
   def call(valor)
     true
@@ -69,49 +55,39 @@ class Symbol
   end
 end
 
-class Matcher_and_combinator < Matcher
-  attr_accessor :un_matcher, :matchers
+module Bindea
+  attr_accessor :matchers
 
   def initialize(un_matcher, *matchers)
-    self.un_matcher = un_matcher
     self.matchers = matchers
-  end
-
-  def call(un_objeto)
-    self.un_matcher.call(un_objeto) && self.matchers.all? {|otro_matcher| otro_matcher.call(un_objeto)}
+    self.matchers << un_matcher
   end
 
   def bindear(un_objeto, diccionario)
-    un_matcher.bindear(un_objeto, diccionario)
     matchers.each do |matcher|
       matcher.bindear(un_objeto, diccionario)
     end
   end
-
 end
 
-class Matcher_or_combinator < Matcher
-  attr_accessor :un_matcher, :matchers
-
-  def initialize(un_matcher, *matchers)
-    self.un_matcher = un_matcher
-    self.matchers = matchers
-  end
-
+class Matcher_and_combinator
+  include Matcher
+  include Bindea
   def call(un_objeto)
-    self.un_matcher.call(un_objeto) || self.matchers.any? {|otro_matcher| otro_matcher.call(un_objeto)}
+    self.matchers.all? {|otro_matcher| otro_matcher.call(un_objeto)}
   end
-
-  def bindear(un_objeto, diccionario)
-    un_matcher.bindear(un_objeto, diccionario)
-    matchers.each do |matcher|
-      matcher.bindear(un_objeto, diccionario)
-    end
-  end
-
 end
 
-class Matcher_not_combinator < Matcher
+class Matcher_or_combinator
+  include Matcher
+  include Bindea
+  def call(un_objeto)
+    self.matchers.any? {|otro_matcher| otro_matcher.call(un_objeto)}
+  end
+end
+
+class Matcher_not_combinator
+  include Matcher
   attr_accessor :matcher
 
   def initialize(matcher)
@@ -125,10 +101,10 @@ class Matcher_not_combinator < Matcher
   def bindear(un_objeto, diccionario)
     matcher.bindear(un_objeto, diccionario)
   end
-
 end
 
-class Matcher_val < Matcher
+class Matcher_val
+  include Matcher
 
   def initialize(un_valor)
     @valor = un_valor
@@ -137,45 +113,36 @@ class Matcher_val < Matcher
   def call(un_valor)
     @valor == un_valor
   end
-
-  def bindear(un_objeto, diccionario)
-  end
 end
 
-class Matcher_type < Matcher
-  attr_accessor :tipo
+class Matcher_type
+  include Matcher
 
   def initialize(un_tipo)
-    self.tipo = un_tipo
+    @tipo = un_tipo
   end
 
   def call(un_objeto)
-    un_objeto.is_a? self.tipo
-  end
-
-  def bindear(un_objeto, diccionario)
+    un_objeto.is_a? @tipo
   end
 end
 
-class Matcher_duck_typing < Matcher
-  attr_accessor :metodos
+class Matcher_duck_typing
+  include Matcher
 
   def initialize(*metodos)
-    self.metodos = metodos
+    @metodos = metodos
   end
 
   def call(un_objeto)
-    self.metodos.all? {|un_metodo| un_objeto.methods.include?(un_metodo)}
-  end
-
-  def bindear(un_objeto, diccionario)
+    @metodos.all? {|un_metodo| un_objeto.respond_to?(un_metodo)}
   end
 end
 
+class Matcher_list
+  include Matcher
 
-class Matcher_list < Matcher
-
-  def initialize(una_lista, *condicion)
+  def initialize(una_lista, condicion = true)
     @una_lista = una_lista
     @condicion = condicion
   end
@@ -184,21 +151,20 @@ class Matcher_list < Matcher
     un_objeto.class.ancestors.include? Matcher
   end
 
-  private def comparar_listas(hash)
-    hash.all? do |valor, otro_valor|
+  private def comparar_listas(lista)
+    lista.all? do |valor, otro_valor|
       valor.is_a?(Symbol) || es_matcher(valor) ? valor.call(otro_valor) : val(valor).call(otro_valor)
     end
   end
 
   def call(otra_lista)
-    if @condicion == [true] || @condicion == []
-      hash = Hash[@una_lista.zip(otra_lista)]
-      @una_lista.size == otra_lista.size ?  comparar_listas(hash) : false
+    lista = @una_lista.zip(otra_lista)
+    if @condicion
+      @una_lista.size == otra_lista.size ? comparar_listas(lista) : false
     else
-      comparar_listas(Hash[@una_lista.zip(otra_lista)])
+      comparar_listas(lista)
     end
   end
-
 
   def bindear(un_objeto, diccionario)
     i = 0
@@ -206,48 +172,78 @@ class Matcher_list < Matcher
       if elem.methods.include?(:bindear)
         elem.bindear(un_objeto[i], diccionario)
       end
-        i+= 1
+        i += 1
       end
     end
-
 end
 
 class Pattern
-  attr_accessor :diccionario, :objeto_matcheable
+  attr_accessor :objeto_matcheable, :lista_with
 
-  def initialize
-    self.diccionario = {}
+  def initialize(un_objeto)
+    self.objeto_matcheable = un_objeto
+    self.lista_with = []
   end
 
   def with(*matchers, &bloque)
-    if match(matchers)
-      bindear(matchers)
-      self.instance_eval &bloque
-     # exit
+    un_with = With.new(self.objeto_matcheable, matchers, &bloque)
+    self.lista_with << un_with
+  end
+
+  def otherwise(&bloque)
+    un_otherwise = Otherwise.new(&bloque)
+    self.lista_with << un_otherwise
+  end
+
+  def matchear
+    self.lista_with.each do |patron|
+      return patron.call if patron.call
     end
-  end
-
-  def other_wise(&bloque)
-    self.instance_eval &bloque
-  end
-
-  def bindear(matchers)
-    matchers.each do |matcher|
-      matcher.bindear(objeto_matcheable,diccionario)
-    end
-  end
-
-  def method_missing(sym, *args)
-    self.diccionario[sym]
-  end
-
-  def match(matchers)
-    matchers.all? {|un_matcher| un_matcher.call(self.objeto_matcheable)}
   end
 end
 
+class With
+  attr_accessor :objeto_matcheable, :matchers, :bloque, :diccionario
 
+  def initialize(objeto_matcheable, matchers, &bloque)
+    self.objeto_matcheable = objeto_matcheable
+    self.matchers = matchers
+    self.bloque = bloque
+    self.diccionario = {}
+  end
 
+  def call
+    if match
+      bindear
+      self.instance_eval &self.bloque
+    end
+  end
 
+  def bindear
+    self.matchers.each do |matcher|
+      matcher.bindear(self.objeto_matcheable, self.diccionario)
+    end
+  end
 
+  def match
+    self.matchers.all? {|un_matcher| un_matcher.call(self.objeto_matcheable)}
+  end
+
+  def method_missing(sym, *args)
+    super unless self.diccionario.has_key? sym
+    self.diccionario[sym]
+  end
+end
+
+class Otherwise
+  attr_accessor :bloque
+
+  def initialize(&bloque)
+    self.bloque = bloque
+  end
+
+  def call
+    self.instance_eval &self.bloque
+  end
+end
 

@@ -29,7 +29,6 @@ describe 'tests_tp_tadp_matcher' do
     end
   end
 
-  pattern = Pattern.new
 
   it 'test matcher variable' do
     expect(:a_variable_name.call('nombre')).to be(true)
@@ -121,99 +120,76 @@ describe 'tests_tp_tadp_matcher' do
   end
 
   it 'test matchea un string con matchers diferentes' do
-    pattern.objeto_matcheable = 'hola'
-    expect(pattern.match([type(String), :a_string, val('hola')])).to be(true)
+    expect(matches?(['a','b','c']) do
+      with(list([type(String), :a_string, val('c')])) {a_string}
+    end).to eq('b')
   end
 
   it 'test matchea un valor con matchers diferentes' do
-    pattern.objeto_matcheable = 10
-    expect(pattern.match([type(Fixnum), :un_valor, val(10), duck(:+)])).to be(true)
+    expect(matches?(10) do
+      with(type(Fixnum), :un_valor, val(10), duck(:+)) {un_valor}
+    end).to be(10)
   end
 
   it 'test matchea una lista de matchers simples y compuestos por lists' do
-    pattern.objeto_matcheable = [1,2]
-    expect(pattern.match([list([1, 2])])).to be(true)
-    expect(pattern.match([list([:a, :b])])).to be(true)
-    expect(pattern.match([list([:a, :b]), list([1, 2]), list([val(1), val(2)])])).to be(true)
+    expect(matches?([1,2]) do
+      with(list([1, :a])) {a}
+    end).to be(2)
+
+    expect(matches?([1,2]) do
+      with(list([:a, :b]), list([1, 2]), list([val(1), val(2)])) {a + b}
+    end).to be(3)
   end
 
   it 'test matchea una lista con ' do
-    pattern.objeto_matcheable = [1,2,Object.new]
     expect((duck(:+).and(type(Fixnum), :x)).call(1)).to eq(true)
     expect((:y.or(val(4))).call(2)).to eq(true)
     expect((duck(:+).not).call(Object.new)).to eq(true)
-    expect(pattern.match([list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])])).to be(true)
   end
 
-  it 'test Patterns con type y variables con cadena' do
-    pattern.objeto_matcheable = 'hola'
-    expect(pattern.with(type(String), :a_string) { a_string.length }).to eq(4)
-    pattern.objeto_matcheable = 10
-    expect(pattern.with(type(Integer), :size) { size }).to eq(10)
-  end
-
-
-  it 'test Patterns con listas y with con [1,2]' do
-    pattern.objeto_matcheable = [1,2]
-    expect(pattern.with(list([:a, :b])) { a + b } ).to eq(3)
-  end
 
   it 'test Patterns con listas de matchers con [1,2,Objeto]' do
-    pattern.objeto_matcheable = [1,2,Object.new]
-    expect(pattern.with(list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])) { x + y }).to eq(3)
+    expect(matches?([1,2,Object.new]) do
+      with(list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])) { x + y }
+    end).to be(3)
   end
 
   it 'test Patterns con lista [1,2,3]' do
-    pattern.objeto_matcheable = [1,2,3]
-    expect(pattern.with(list([:a, val(2), duck(:+)])) { a + 2 }).to eq(3)
+    expect(matches?([1,2,3]) do
+      with(list([:a, val(2), duck(:+)])) { a + 2 }
+    end).to be(3)
   end
 
   it 'test Patterns con envio de mensaje a un objeto ' do
     x = Object.new
     x.send(:define_singleton_method, :hola) { 'hola' }
-    pattern.objeto_matcheable = x
-    expect(pattern.with(duck(:hola)) { 'chau!' }).to eq('chau!')
+    expect(matches?(x) do
+      with(duck(:hola)) { 'chau!' }
+    end).to eq('chau!')
   end
 
   it 'test Pattern matcher de variable con lista' do
-    pattern.objeto_matcheable = [2,4]
-    expect(pattern.with(:y.and(list([val(2),:b]))) {y.size + b}).to eq(6)
+    expect(matches?([2,4]) do
+      with(:y.and(list([val(2),:b]))) {y.size + b}
+    end).to eq(6)
   end
-
-
-
-  # arreglar el corte
 
   it 'test Matches corta en el otherwise' do
-    x = 2
-    matches?(x) do
-      expect(with(list([:a, val(2), duck(:+)])) {a + 2}).to eq(nil)
-      expect(with(list([1, 2, 3])) { 'acá no llego' }).to eq(nil)
-      expect(otherwise { 'acá no llego' }).to eq('acá no llego')
-    end
-  end
-
-  it 'test Matches matchea en el primer with' do
     x = [1,2,3]
-    matches?(x) do
-      expect(with(list([:a, val(2), duck(:+)])) {a + 2}).to eq(3)
-      expect(with(list([1, 2, 3])) { 'acá no llego' }).to eq('acá no llego')
-      expect(otherwise { 'acá no llego' }).to eq('acá no llego')
-    end
+    expect(matches?(x) do
+      with(list([:a, val(2), duck(:+)])) {a + 2}
+      with(list([1, 2, 3])) { 'acá no llego' }
+      otherwise { 'acá no llego' }
+    end).to eq(3)
   end
 
   it 'test Matches ' do
-
     x = Object.new
     x.send(:define_singleton_method, :hola) { 'hola' }
-
-    matches?(x) do
-      expect(with(duck(:hola)) { 'chau!' }).to eq('chau!')
-      expect(with(type(Object)) { 'acá no llego' }).to eq('acá no llego')
-    end
-
+    expect(matches?(x) do
+      with(duck(:hola)) { 'chau!' }
+      with(type(Object)) { 'acá no llego' }
+    end).to eq('chau!')
   end
-
-
 
 end
