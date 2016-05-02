@@ -158,11 +158,15 @@ class Matcher_list
   end
 
   def call(otra_lista)
-    lista = @una_lista.zip(otra_lista)
-    if @condicion
-      @una_lista.size == otra_lista.size ? comparar_listas(lista) : false
+    if otra_lista.is_a?(Array)
+      lista = @una_lista.zip(otra_lista)
+      if @condicion
+        @una_lista.size == otra_lista.size ? comparar_listas(lista) : false
+      else
+        comparar_listas(lista)
+      end
     else
-      comparar_listas(lista)
+      false
     end
   end
 

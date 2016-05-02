@@ -90,6 +90,7 @@ describe 'tests_tp_tadp_matcher' do
   end
 
   it 'test combinator varios' do
+    expect((:y.and(list([val(3),3])).call(3))).to be(false)
     expect(:y.and(:a.or(duck(:+).not, val(5), type(Fixnum).not)).call(5)).to eq(true)
   end
 
@@ -169,9 +170,10 @@ describe 'tests_tp_tadp_matcher' do
   end
 
   it 'test Pattern matcher de variable con lista' do
-    expect(matches?([2,4]) do
-      with(:y.and(list([val(2),:b]))) {y.size + b}
-    end).to eq(6)
+    expect(matches?(2) do
+      with(:y.and(list([val(2),1]))) {'no llega'}
+      with(:y.or(list([val(2),1]))) {y + 2}
+    end).to eq(4)
   end
 
   it 'test Matches corta en el otherwise' do
@@ -187,9 +189,19 @@ describe 'tests_tp_tadp_matcher' do
     x = Object.new
     x.send(:define_singleton_method, :hola) { 'hola' }
     expect(matches?(x) do
+      with(list([:i])) {i}
       with(duck(:hola)) { 'chau!' }
       with(type(Object)) { 'acá no llego' }
     end).to eq('chau!')
   end
+
+  it 'test aca si llego' do
+    expect(matches?(2) do
+      with(type(String)) { a + 2 }
+      with(list([1, 2, 3])) { 'acá no llego' }
+      otherwise { 'acá si llego' }
+    end).to eq('acá si llego')
+  end
+
 
 end
