@@ -197,7 +197,8 @@ class Pattern
 
   def matchear
     self.lista_with.each do |patron|
-      return patron.call if patron.call
+      resultado = patron.call
+      return resultado if resultado
     end
   end
 end
