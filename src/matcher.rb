@@ -170,15 +170,18 @@ class Matcher_list
     end
   end
 
-  def bindear(un_objeto, diccionario)
-    i = 0
-    @una_lista.each do |elem|
-      if elem.methods.include?(:bindear)
-        elem.bindear(un_objeto[i], diccionario)
-      end
-        i += 1
+#una lista es list y un_objeto es la lista para comparar si matchea
+  def bindear(un_objeto,diccionario)
+    if un_objeto.methods.include? (:zip)
+
+      @una_lista.zip(un_objeto).each do |match_list, elem_list|
+        if match_list.methods.include?(:bindear)
+          match_list.bindear(elem_list, diccionario)
+        end
       end
     end
+  end
+
 end
 
 class Pattern
@@ -200,15 +203,12 @@ class Pattern
   end
 
   def matchear
-    self.lista_with.each do |patron|
-      resultado = patron.call
-      return resultado if resultado
-    end
+    self.lista_with.detect { |patron| patron.call }.resultado_eval
   end
 end
 
 class With
-  attr_accessor :objeto_matcheable, :matchers, :bloque, :diccionario
+  attr_accessor :objeto_matcheable, :matchers, :bloque, :diccionario, :resultado_eval
 
   def initialize(objeto_matcheable, matchers, &bloque)
     self.objeto_matcheable = objeto_matcheable
@@ -220,7 +220,8 @@ class With
   def call
     if match
       bindear
-      self.instance_eval &self.bloque
+      self.resultado_eval = self.instance_eval &self.bloque
+      true
     end
   end
 
@@ -241,14 +242,15 @@ class With
 end
 
 class Otherwise
-  attr_accessor :bloque
+  attr_accessor :bloque, :resultado_eval
 
   def initialize(&bloque)
     self.bloque = bloque
   end
 
   def call
-    self.instance_eval &self.bloque
+    self.resultado_eval = self.instance_eval &self.bloque
+    true
   end
 end
 
