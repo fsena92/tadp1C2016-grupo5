@@ -147,8 +147,7 @@ describe 'tests_tp_tadp_matcher' do
     expect((:y.or(val(4))).call(2)).to eq(true)
     expect((duck(:+).not).call(Object.new)).to eq(true)
   end
-
-
+  
   it 'test Patterns con listas de matchers con [1,2,Objeto]' do
     expect(matches?([1,2,Object.new]) do
       with(list([duck(:+).and(type(Fixnum), :x), :y.or(val(4)), duck(:+).not])) { x + y }
@@ -203,7 +202,6 @@ describe 'tests_tp_tadp_matcher' do
     end).to eq('acá si llego')
   end
 
-
   it 'test Matches lista de listas' do
     objeto = [[1,2], [3], [1,2,3,4]]
     expect(val(objeto).call(objeto)).to eq(true)
@@ -213,6 +211,13 @@ describe 'tests_tp_tadp_matcher' do
     expect(matches?(objeto) do
       with(list([:a, duck(:zip), val([1,2,3,4])])) { a.zip([10, 20]) }
     end).to eq([[1,10], [2, 20]])
+  end
+
+  it 'test No Matchea with' do
+    objeto = 'zarlompa'
+    expect{matches?(objeto) do
+      with(list(duck(:zip), val([1,2,3,4])))
+    end}.to raise_error(MatchError)
   end
 
 end
