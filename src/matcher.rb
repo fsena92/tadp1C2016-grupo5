@@ -117,9 +117,9 @@ class Matcher_not_combinator
     !@matcher.call(un_objeto)
   end
 
-  def bindear(un_objeto, diccionario)
-    @matcher.bindear(un_objeto, diccionario)
-  end
+  #def bindear(un_objeto, diccionario)
+   # @matcher.bindear(un_objeto, diccionario)
+  #end
 
 end
 
@@ -183,7 +183,7 @@ class Matcher_list
 
   private def comparar_listas(lista)
     lista.all? do |valor, otro_valor|
-      valor.is_a?(Symbol) || es_matcher(valor) ? valor.call(otro_valor) : val(valor).call(otro_valor)
+      es_matcher(valor) ? valor.call(otro_valor) : val(valor).call(otro_valor)
     end
   end
 
@@ -200,9 +200,9 @@ class Matcher_list
     end
   end
 
-#una lista es list y un_objeto es la lista para comparar si matchea
+#una_lista es list y un_objeto es la lista para comparar si matchea
   def bindear(un_objeto, diccionario)
-    if un_objeto.methods.include? (:zip)
+    if self.call(un_objeto) #call se fija si matchea
       @una_lista.zip(un_objeto).each do |match_list, elem_list|
         if match_list.methods.include?(:bindear)
           match_list.bindear(elem_list, diccionario)

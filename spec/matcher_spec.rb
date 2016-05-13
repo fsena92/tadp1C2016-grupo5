@@ -204,10 +204,6 @@ describe 'tests_tp_tadp_matcher' do
 
   it 'test Matches lista de listas' do
     objeto = [[1,2], [3], [1,2,3,4]]
-    expect(val(objeto).call(objeto)).to eq(true)
-    expect(duck(:zip).call(objeto)).to eq(true)
-    expect(:a.call(objeto)).to eq(true)
-    expect(list([:a, duck(:zip), val([1,2,3,4])]).call(objeto)).to be(true)
     expect(matches?(objeto) do
       with(list([:a, duck(:zip), val([1,2,3,4])])) { a.zip([10, 20]) }
     end).to eq([[1,10], [2, 20]])
