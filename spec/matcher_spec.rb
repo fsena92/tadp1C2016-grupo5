@@ -212,7 +212,7 @@ describe 'tests_tp_tadp_matcher' do
   it 'test No Matchea with' do
     objeto = 'zarlompa'
     expect{matches?(objeto) do
-      with(list(duck(:zip), val([1,2,3,4])))
+      with(list([duck(:zip), val([1,2,3,4])]))
     end}.to raise_error(MatchError)
   end
 

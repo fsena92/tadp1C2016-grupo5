@@ -173,7 +173,9 @@ class Matcher_list
   include Matcher
 
   def initialize(una_lista, condicion = true)
-    @una_lista = una_lista
+    @matchers = una_lista.map do |elem|
+      !es_matcher(elem) ? val(elem) : elem
+    end
     @condicion = condicion
   end
 
@@ -182,16 +184,16 @@ class Matcher_list
   end
 
   private def comparar_listas(lista)
-    lista.all? do |valor, otro_valor|
-      es_matcher(valor) ? valor.call(otro_valor) : val(valor).call(otro_valor)
+    lista.all? do |un_matcher, otro_valor|
+      un_matcher.call(otro_valor)
     end
   end
 
   def call(otra_lista)
     if otra_lista.is_a?(Array)
-      lista = @una_lista.zip(otra_lista)
+      lista = @matchers.zip(otra_lista)
       if @condicion
-        @una_lista.size == otra_lista.size ? comparar_listas(lista) : false
+        @matchers.size == otra_lista.size ? comparar_listas(lista) : false
       else
         comparar_listas(lista)
       end
@@ -203,7 +205,7 @@ class Matcher_list
 #una_lista es list y un_objeto es la lista para comparar si matchea
   def bindear(un_objeto, diccionario)
     if self.call(un_objeto) #call se fija si matchea
-      @una_lista.zip(un_objeto).each do |match_list, elem_list|
+      @matchers.zip(un_objeto).each do |match_list, elem_list|
         if match_list.methods.include?(:bindear)
           match_list.bindear(elem_list, diccionario)
         end
