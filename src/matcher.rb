@@ -73,16 +73,13 @@ module Bindea
   end
 
   def bindear(un_objeto, diccionario)
-    @matchers.each do |matcher|
-      matcher.bindear(un_objeto, diccionario)
-    end
+    @matchers.each {|matcher| matcher.bindear(un_objeto, diccionario)}
   end
 
 end
 
 
 class Matcher_and_combinator
-
   include Matcher
   include Bindea
 
@@ -94,7 +91,6 @@ end
 
 
 class Matcher_or_combinator
-
   include Matcher
   include Bindea
 
@@ -106,7 +102,6 @@ end
 
 
 class Matcher_not_combinator
-
   include Matcher
 
   def initialize(matcher)
@@ -117,15 +112,10 @@ class Matcher_not_combinator
     !@matcher.call(un_objeto)
   end
 
-  #def bindear(un_objeto, diccionario)
-   # @matcher.bindear(un_objeto, diccionario)
-  #end
-
 end
 
 
 class Matcher_val
-
   include Matcher
 
   def initialize(un_valor)
@@ -140,7 +130,6 @@ end
 
 
 class Matcher_type
-
   include Matcher
 
   def initialize(un_tipo)
@@ -154,7 +143,6 @@ class Matcher_type
 end
 
 class Matcher_duck_typing
-
   include Matcher
 
   def initialize(*metodos)
@@ -169,7 +157,6 @@ end
 
 
 class Matcher_list
-
   include Matcher
 
   def initialize(una_lista, condicion = true)
@@ -184,9 +171,7 @@ class Matcher_list
   end
 
   private def comparar_listas(lista)
-    lista.all? do |un_matcher, otro_valor|
-      un_matcher.call(otro_valor)
-    end
+    lista.all? {|un_matcher, otro_valor| un_matcher.call(otro_valor)}
   end
 
   def call(otra_lista)
@@ -202,13 +187,10 @@ class Matcher_list
     end
   end
 
-#una_lista es list y un_objeto es la lista para comparar si matchea
   def bindear(un_objeto, diccionario)
-    if self.call(un_objeto) #call se fija si matchea
+    if call(un_objeto)          #call se fija si matchea
       @matchers.zip(un_objeto).each do |match_list, elem_list|
-        if match_list.methods.include?(:bindear)
           match_list.bindear(elem_list, diccionario)
-        end
       end
     end
   end
@@ -234,14 +216,10 @@ class Pattern
   end
 
   def matchear
-    aux = @lista_with.detect { |patron| patron.match }
+    aux = @lista_with.detect {|patron| patron.match}
     aux != nil ? aux.call : (raise MatchError)
   end
 
-end
-
-
-class MatchError < StandardError
 end
 
 
@@ -291,4 +269,8 @@ class Otherwise
     true
   end
 
+end
+
+
+class MatchError < StandardError
 end
