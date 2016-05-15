@@ -78,10 +78,6 @@ module Bindea
 
 end
 
-class Matcher_and_or_combinator
-  include Matcher
-  include Bindea
-end
 
 class Matcher_and_combinator
   include Matcher
