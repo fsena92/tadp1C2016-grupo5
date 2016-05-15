@@ -174,7 +174,7 @@ class Matcher_list
   end
 
   def call(otra_lista)
-    if !otra_lista.is_a?(Array)
+    unless otra_lista.is_a?(Array)
       return false
     end
     lista = @matchers.zip(otra_lista)
