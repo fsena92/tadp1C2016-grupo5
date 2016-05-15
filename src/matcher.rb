@@ -78,6 +78,10 @@ module Bindea
 
 end
 
+class Matcher_and_or_combinator
+  include Matcher
+  include Bindea
+end
 
 class Matcher_and_combinator
   include Matcher
@@ -142,6 +146,7 @@ class Matcher_type
 
 end
 
+
 class Matcher_duck_typing
   include Matcher
 
@@ -173,15 +178,14 @@ class Matcher_list
   end
 
   def call(otra_lista)
-    if otra_lista.is_a?(Array)
-      lista = @matchers.zip(otra_lista)
-      if @condicion
-        @matchers.size == otra_lista.size ? comparar_listas(lista) : false
-      else
-        comparar_listas(lista)
-      end
+    if !otra_lista.is_a?(Array)
+      return false
+    end
+    lista = @matchers.zip(otra_lista)
+    if @condicion
+      @matchers.size == otra_lista.size ? comparar_listas(lista) : false
     else
-      false
+      comparar_listas(lista)
     end
   end
 
@@ -234,9 +238,7 @@ class With
   end
 
   def bindear
-    @matchers.each do |matcher|
-      matcher.bindear(@objeto_matcheable, @diccionario)
-    end
+    @matchers.each {|matcher| matcher.bindear(@objeto_matcheable, @diccionario)}
   end
 
   def match
