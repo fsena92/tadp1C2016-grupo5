@@ -23,9 +23,9 @@ class Object
   include Matcheadores
 
   def matches?(un_objeto, &bloque)
-    pattern = Pattern.new(un_objeto)
-    pattern.instance_eval &bloque
-    pattern.matchear
+    pattern_context = PatternMatchingContext.new(un_objeto)
+    pattern_context.instance_eval &bloque
+    pattern_context.matchear
   end
 
 end
@@ -160,9 +160,7 @@ class Matcher_list
   include Matcher
 
   def initialize(una_lista, condicion = true)
-    @matchers = una_lista.map do |elem|
-      !es_matcher(elem) ? val(elem) : elem
-    end
+    @matchers = una_lista.map {|elem| !es_matcher(elem) ? val(elem) : elem}
     @condicion = condicion
   end
 
@@ -189,34 +187,32 @@ class Matcher_list
 
   def bindear(un_objeto, diccionario)
     if call(un_objeto)          #call se fija si matchea
-      @matchers.zip(un_objeto).each do |match_list, elem_list|
-          match_list.bindear(elem_list, diccionario)
-      end
+      @matchers.zip(un_objeto).each {|match_list, elem_list| match_list.bindear(elem_list, diccionario)}
     end
   end
 
 end
 
 
-class Pattern
+class PatternMatchingContext
 
   def initialize(un_objeto)
     @objeto_matcheable = un_objeto
-    @lista_with = []
+    @lista_pattern = []
   end
 
   def with(*matchers, &bloque)
     un_with = With.new(@objeto_matcheable, matchers, &bloque)
-    @lista_with << un_with
+    @lista_pattern << un_with
   end
 
   def otherwise(&bloque)
     un_otherwise = Otherwise.new(&bloque)
-    @lista_with << un_otherwise
+    @lista_pattern << un_otherwise
   end
 
   def matchear
-    aux = @lista_with.detect {|patron| patron.match}
+    aux = @lista_pattern.detect {|patron| patron.match}
     aux != nil ? aux.call : (raise MatchError)
   end
 
