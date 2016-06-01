@@ -1,6 +1,6 @@
 /scala/bin/
 /scala/.cache-tests
 /scala/.cache-main
-*.cache-tests
+/scala/.settings/
 *.idea
 
