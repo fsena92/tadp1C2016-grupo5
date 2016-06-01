@@ -1,5 +1,7 @@
+/bin/
 .idea/
 *.lock
+*.bin
 
 *.gem
 *.rbc
