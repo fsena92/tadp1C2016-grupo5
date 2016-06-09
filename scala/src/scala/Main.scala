@@ -4,13 +4,16 @@ import scala.collection.mutable.Set
 object Main {
   def main(args: Array[String]): Unit = {
     
-    val atila = Heroe(1,2,3,4)
-    atila.asignarTrabajo(Mago)
+    val equipo = new Equipo("El Escuadron Suicida",10)
+    val atila = new Heroe(1,2,10,4)
+    val aquiles = new Heroe(9,2,3,4)
     
-    println(atila.asignarTrabajo(Mago).job)
- 
-    val unSet = Set(Mago,Mago,2,3)
-    println(unSet)
+    equipo.obtenerMiembro(atila.asignarTrabajo(Guerrero))
+    equipo.obtenerMiembro(aquiles.asignarTrabajo(Mago))
+    println(aquiles.asignarTrabajo(Mago).job)
+    println(equipo.heroes)
+    println(equipo.lider)
+    
     
     
     
