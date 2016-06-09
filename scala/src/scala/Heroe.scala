@@ -10,8 +10,11 @@ case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Do
   
   
   def asignarTrabajo(trabajo: Trabajo):Heroe = {
-    modificarStats(trabajo.HP, trabajo.fuerza, trabajo.velocidad, trabajo.inteligencia)
-    copy(job = trabajo) 
+    copy(HP = HP + trabajo.HP,
+        fuerza = fuerza +trabajo.fuerza,
+        velocidad = velocidad + trabajo.velocidad,
+        inteligencia = inteligencia + trabajo.inteligencia,
+        job = trabajo) 
   }
   
   def modificarStats(h: Double, f: Double, v: Double ,i: Double):Heroe = 
@@ -19,7 +22,7 @@ case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Do
   
   
   
-  def equiparInventario(items: Item*) { 
+ /* def equiparInventario(items: Item*) { 
     
     items.foldLeft(EstadoAnterior(this):Estado) {(heroeAnterior, item) => 
           
@@ -40,7 +43,7 @@ case class Heroe(HP: Double, fuerza: Double, velocidad: Double, inteligencia: Do
     } 
     
   }
-  
+  */
   
   
   

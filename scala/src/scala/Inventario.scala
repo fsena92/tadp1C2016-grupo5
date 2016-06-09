@@ -27,7 +27,7 @@ class Inventario(var cabeza: Cabeza,var armadura: Armadura,var armaSimple: (Arma
     armaSimple match {
       case (null, arma2) => armaSimple = (item, arma2)
       case (arma1, null) => armaSimple = (arma1, item)
-      case (null, null) => armaSimple = (item, null)
+      case null => armaSimple = (item, null)
       case (arma1, arma2) => 
         arma1.desequipar(heroe)
         armaSimple = (item, arma2)
@@ -57,8 +57,5 @@ class Inventario(var cabeza: Cabeza,var armadura: Armadura,var armaSimple: (Arma
     item.equipar(heroe)
     items += item
   }
-  
-  
-  
   
 }

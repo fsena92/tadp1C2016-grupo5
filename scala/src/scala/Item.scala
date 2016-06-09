@@ -2,8 +2,8 @@ package scala
 
 trait Item {
   def cumpleCondicion(heroe :Heroe) = true
-  def desequipar(heroe: Heroe)
-  def equipar(heroe: Heroe)
+  def desequipar(heroe: Heroe):Heroe
+  def equipar(heroe: Heroe):Heroe
 }
 
 abstract class Armadura extends Item 
@@ -18,7 +18,7 @@ case object EspadaDeLaVida extends ArmaSimple {
   def desequipar(heroe: Heroe) = heroe.modificarStats(0, -heroe.HP, 0, 0)  
 }
 case object EscudoAntiRobo extends ArmaSimple {
-  def cumpleCondicion(heroe: Heroe) = heroe.job match {
+  override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Ladron => false
     case _ => heroe.fuerza >= 20
   }
@@ -26,7 +26,7 @@ case object EscudoAntiRobo extends ArmaSimple {
   def desequipar(heroe: Heroe) = heroe.modificarStats(-20, 0, 0, 0)
 }
 case object PalitoMagico extends ArmaSimple {
-  def cumpleCondicion(heroe: Heroe) = heroe.job match {
+  override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Mago => true
     case Ladron => heroe.inteligencia > 30
     case _ => false
@@ -43,13 +43,13 @@ case object ArcoViejo extends ArmaDoble {
 
 abstract class Cabeza extends Item // solo uno
 case object CascoVikingo extends Cabeza {
-  def cumpleCondicion(heroe: Heroe) = heroe.fuerza > 30
+  override def cumpleCondicion(heroe: Heroe) = heroe.fuerza > 30
   def equipar(heroe: Heroe):Heroe = heroe.modificarStats(10, 0, 0, 0)
   def desequipar(heroe: Heroe):Heroe = heroe.modificarStats(-10, 0, 0, 0)
 }
 
 case object VinchaDelBufaloDelAgua extends Cabeza {
-  def cumpleCondicion(heroe: Heroe) = heroe.job == null
+  override def cumpleCondicion(heroe: Heroe) = heroe.job == null
   def equipar(heroe: Heroe) = {
     if(heroe.fuerza > heroe.inteligencia) heroe.modificarStats(0, 0, 0, 30)
     else heroe.modificarStats(10, 10, 10, 0)
@@ -84,5 +84,6 @@ case object Minimalismo extends Talisman {
 case object Maldito extends Talisman {
   def equipar(heroe: Heroe) = 
     heroe.modificarStats(1 - heroe.HP, 1 - heroe.fuerza, 1 - heroe.velocidad, 1 - heroe.inteligencia)
+  def desequipar(heroe: Heroe) = heroe.modificarStats(0,0,0,0)
 }
 
