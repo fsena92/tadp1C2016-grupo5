@@ -8,8 +8,9 @@ class UnTest {
   
   
   @Test
-  def algo {
-    assertEquals(1,1)
+  def heroeSeConvierteEnGuerrero {
+     val leonidas = Heroe(1,2,3,4)
+     assertEquals(11, leonidas.asignarTrabajo(Guerrero).HP)    
   }
   
   
