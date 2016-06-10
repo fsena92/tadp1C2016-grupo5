@@ -1,32 +1,33 @@
 package scala
 
-trait Estado
-case class EstadoAnterior(heroe: Heroe) extends Estado
-
 class StatsBase(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: Double , val inteligenciaBase: Double)
 
-case class Heroe(val HP: Double, val fuerza: Double, val velocidad: Double, val inteligencia: Double,
-                 val job:Trabajo, val inventario: Inventario) {
+case class Heroe(var HP: Double, var fuerza: Double, var velocidad: Double, var inteligencia: Double,
+                 var job:Trabajo = null, var inventario: Inventario = new Inventario) {
+
+  var statsBase: StatsBase = new StatsBase(HP, fuerza, velocidad, inteligencia)
   
-  var statsBase: StatsBase = null
-  def this(HP: Double, fuerza:Double, velocidad:Double, inteligencia: Double) {
-    this(HP, fuerza, velocidad, inteligencia, null, null)
-    statsBase = new StatsBase(HP, fuerza, velocidad, inteligencia)
-  }
+  def evitarNegativo(valor: Double):Double = if (valor < 1) 1 else valor
   
   def asignarTrabajo(trabajo: Trabajo):Heroe = {
-    copy(HP = HP + trabajo.HP,
-        fuerza = fuerza +trabajo.fuerza,
-        velocidad = velocidad + trabajo.velocidad,
-        inteligencia = inteligencia + trabajo.inteligencia,
-        job = trabajo) 
+    copy(HP = evitarNegativo(HP + trabajo.HP),
+    fuerza = evitarNegativo(fuerza + trabajo.fuerza),
+    velocidad = evitarNegativo(velocidad + trabajo.velocidad),
+    inteligencia = evitarNegativo(inteligencia + trabajo.inteligencia),
+    job = trabajo) 
   }
   
-  def modificarStats(h: Double, f: Double, v: Double ,i: Double):Heroe = 
-    copy(HP = HP + h, fuerza = fuerza + f, velocidad = velocidad + v, inteligencia = inteligencia + i)
+  def modificarStats(h: Double, f: Double, v: Double ,i: Double):Heroe = {
+    copy(HP = evitarNegativo(HP + h),
+    fuerza = evitarNegativo(fuerza + f),
+    velocidad = evitarNegativo(velocidad + v),
+    inteligencia = evitarNegativo(inteligencia + i))
+  }
   
-
+  def agregarItem(unItem: Item):Heroe = copy(inventario = inventario.equipar(this, unItem))
   
-  
+  def stats() ={
+    (("hp",HP),("fuerza",fuerza),("velocidad",velocidad),("inteligencia",inteligencia))
+  }
   
 }

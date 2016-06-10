@@ -2,25 +2,38 @@ package scala
 
 import scala.collection.mutable.ListBuffer
 
-class Inventario(var cabeza: Cabeza,var armadura: Armadura,var armaSimple: (ArmaSimple,ArmaSimple),
-                 var armaDoble: ArmaDoble, var talismanes: ListBuffer[Talisman], var items: ListBuffer[Item] = ListBuffer()) {
+class Inventario(var cabeza: Cabeza = null, var armadura: Armadura = null, 
+                 var armaSimple: (ArmaSimple,ArmaSimple) = null,
+                 var armaDoble: ArmaDoble = null, var talismanes: ListBuffer[Talisman] = null,
+                 var items: ListBuffer[Item] = ListBuffer()) {
   
+  def equipar(heroe: Heroe, item: Item):Inventario = item match{
+    case Cabeza() => equiparCabeza(heroe,item.asInstanceOf[Cabeza])
+    case Armadura() => equiparArmadura(heroe, item.asInstanceOf[Armadura])
+    case ArmaSimple() => equiparArmaSimple(heroe,item.asInstanceOf[ArmaSimple])
+    case ArmaDoble() => equiparArmaDoble(heroe,item.asInstanceOf[ArmaDoble])
+    case Talisman() => equiparTalisman(heroe,item.asInstanceOf[Talisman])
+  }
   
-  def equipar(heroe: Heroe, item: Cabeza) = {
-    if (cabeza != null) cabeza.desequipar(heroe)
+  def equiparCabeza(heroe: Heroe, item: Cabeza):Inventario = {
+    if (cabeza != null) 
+      cabeza.desequipar(heroe)
+  
     cabeza = item
     item.equipar(heroe)
     items += item
+    this
   }
   
-  def equipar(heroe: Heroe, item: Armadura) = {
+  def equiparArmadura(heroe: Heroe, item: Armadura):Inventario = {
     if (armadura != null) armadura.desequipar(heroe)
     armadura = item
     item.equipar(heroe)
     items += item
+    this
   }
   
-  def equipar(heroe: Heroe, item: ArmaSimple) = { 
+  def equiparArmaSimple(heroe: Heroe, item: ArmaSimple):Inventario = { 
     if (armaDoble != null)
       armaDoble.desequipar(heroe)  
       
@@ -34,13 +47,15 @@ class Inventario(var cabeza: Cabeza,var armadura: Armadura,var armaSimple: (Arma
     }
     item.equipar(heroe)
     items += item
+    this
   }
   
-  def equipar(heroe: Heroe, item: ArmaDoble) = {
+  def equiparArmaDoble(heroe: Heroe, item: ArmaDoble):Inventario = {
     if (armaDoble != null)
       armaDoble.desequipar(heroe)
       
     armaSimple match {
+      case null =>
       case (null, arma2) => arma2.desequipar(heroe)
       case (arma1, null) => arma1.desequipar(heroe)
       case (arma1, arma2) => 
@@ -50,12 +65,14 @@ class Inventario(var cabeza: Cabeza,var armadura: Armadura,var armaSimple: (Arma
     item.equipar(heroe)
     armaDoble = item
     items += item
+    this
   }
   
-  def equipar(heroe: Heroe, item: Talisman) = {
+  def equiparTalisman(heroe: Heroe, item: Talisman):Inventario = {
     talismanes += item
     item.equipar(heroe)
     items += item
+    this
   }
   
 }
