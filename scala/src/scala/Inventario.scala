@@ -3,7 +3,7 @@ package scala
 case class Inventario(var cabeza: Option[Item] = None, var brazos: (Option[Item] , Option[Item]) = (None, None),
     var torso: Option[Item] = None, var talismanes: List[Item] = Nil) {
  
-  def equiparItem(item: Item, heroe: Heroe):Inventario = {
+  def equiparItem(item: Item, heroe: Heroe): Inventario = {
     if (item.cumpleCondicion(heroe)) {
       item match {
         case Cabeza() => ocuparCabeza(item)
@@ -18,7 +18,7 @@ case class Inventario(var cabeza: Option[Item] = None, var brazos: (Option[Item]
     else this
   }
   
-  def agregarTalisman(unTalisman: Item):Inventario = copy(talismanes = unTalisman :: talismanes)  
+  def agregarTalisman(unTalisman: Item): Inventario = copy(talismanes = unTalisman :: talismanes)  
   
   def ocuparCabeza(item: Item):Inventario = copy(cabeza = Some(item))
   def ocuparTorso(item: Item):Inventario = copy(torso = Some(item))
@@ -34,7 +34,9 @@ case class Inventario(var cabeza: Option[Item] = None, var brazos: (Option[Item]
     case (None, None) =>
     case (None, unItem) => 
     case (unItem, None) =>
-    case (unItem, otroItem) => if(unItem == otroItem) brazos = (None, None) else brazos = (None, otroItem)
+    case (unItem, otroItem) => 
+      if(unItem == otroItem) brazos = (None, None) 
+      else brazos = (None, otroItem)
   }
    
   def cabezaOcupada = cabeza.isDefined
@@ -52,14 +54,16 @@ case class Inventario(var cabeza: Option[Item] = None, var brazos: (Option[Item]
     case (None, None) => false
   }
   
-  def itemsEquipados : Int = {
+  def itemsEquipados: Int = {
     val items = List(cabeza,torso,brazos) :: talismanes
     items.foldLeft(0)((cantidadItems, item) => { item match {
       case Cabeza() if(cabezaOcupada) => cantidadItems + 1
       case Torso() if(torsoOcupado) => cantidadItems + 1
       case Talisman() => cantidadItems + 1
       case Brazos() => brazos match {
-          case (Some(item), Some(otroItem)) => if (item == otroItem) cantidadItems + 1 else cantidadItems + 2
+          case (Some(item), Some(otroItem)) => 
+            if (item == otroItem) cantidadItems + 1 
+            else cantidadItems + 2
           case (Some(_), None) => cantidadItems + 1
           case (None, Some(_)) => cantidadItems + 1
           case (None, None) => cantidadItems

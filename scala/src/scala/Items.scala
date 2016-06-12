@@ -1,7 +1,6 @@
 package scala
 
-
-trait Item{
+trait Item {
   val valor = 0
   def cumpleCondicion(heroe :Heroe):Boolean = true
   def desequipar(heroe: Heroe):Heroe = heroe
@@ -13,7 +12,6 @@ case class Torso() extends Item
 case class Brazo() extends Item
 case class Brazos() extends Item
 case class Talisman() extends Item
-
 
 object ArmaduraEleganteSport extends Torso {
   override def equipar(heroe: Heroe) = heroe.modificarStats(-30, 0, 30, 0)
@@ -77,13 +75,13 @@ object VinchaDelBufaloDelAgua extends Cabeza {
 }
 
 object Dedicacion extends Talisman {
-  
   def porcentaje(heroe:Heroe) = heroe.job.get.statPrincipal * 0.10
-  
-  override def equipar(heroe: Heroe) = heroe.modificarStats(porcentaje(heroe), porcentaje(heroe), porcentaje(heroe), porcentaje(heroe))
-  
-  override def desequipar(heroe: Heroe) = heroe.modificarStats(-porcentaje(heroe), -porcentaje(heroe), -porcentaje(heroe), -porcentaje(heroe))
-  
+  override def equipar(heroe: Heroe) = {
+    heroe.modificarStats(porcentaje(heroe), porcentaje(heroe), porcentaje(heroe), porcentaje(heroe))
+  }
+  override def desequipar(heroe: Heroe) = {
+    heroe.modificarStats(-porcentaje(heroe), -porcentaje(heroe), -porcentaje(heroe), -porcentaje(heroe))
+  }
 }
 
 object Minimalismo extends Talisman {
@@ -98,12 +96,12 @@ object Minimalismo extends Talisman {
 }
 
 object Maldito extends Talisman {
-  var heroeAnterior:Heroe = ???
-  
+  var anterior:Heroe = ???
   override def equipar(heroe: Heroe) = {
-    heroeAnterior = heroe
+    anterior = heroe
     heroe.modificarStats(1, 1, 1, 1)
   }
-  override def desequipar(heroe: Heroe) = heroe.modificarStats(heroeAnterior.HP,heroeAnterior.fuerza,heroeAnterior.velocidad,heroeAnterior.inteligencia)
-  
+  override def desequipar(heroe: Heroe) = {
+    heroe.modificarStats(anterior.HP, anterior.fuerza, anterior.velocidad, anterior.inteligencia)
+  }
 }
