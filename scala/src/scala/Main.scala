@@ -4,17 +4,19 @@ object Main {
   def main(args: Array[String]): Unit = {
    
     
-    val atila = new Heroe(1,2,10,4)
+    val atila = new Heroe(1,34,33,33)
     val aquiles = new Heroe(9,2,3,4)
+   
+   
+
     
-    println(aquiles.stats())
+    println(atila.stats)
+   
+    //println(aquiles.equipar(CascoVikingo).stats)
     
-    var lista = List(aquiles, atila)
-    lista.map(h => h.agregarItem(CascoVikingo))
+
     
-    println(aquiles.stats())
-    
-    
-    
-  }
+       
+  }   
+  
 }

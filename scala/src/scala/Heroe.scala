@@ -1,33 +1,27 @@
 package scala
 
-class StatsBase(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: Double , val inteligenciaBase: Double)
-
-case class Heroe(var HP: Double, var fuerza: Double, var velocidad: Double, var inteligencia: Double,
-                 var job:Trabajo = null, var inventario: Inventario = new Inventario) {
-
-  var statsBase: StatsBase = new StatsBase(HP, fuerza, velocidad, inteligencia)
-  
-  def evitarNegativo(valor: Double):Double = if (valor < 1) 1 else valor
+case class Heroe(val HP: Double, val fuerza: Double, val velocidad: Double, val inteligencia: Double,
+                 val job: Option[Trabajo] = None, val inventario: Inventario = new Inventario()) {
   
   def asignarTrabajo(trabajo: Trabajo):Heroe = {
-    copy(HP = evitarNegativo(HP + trabajo.HP),
-    fuerza = evitarNegativo(fuerza + trabajo.fuerza),
-    velocidad = evitarNegativo(velocidad + trabajo.velocidad),
-    inteligencia = evitarNegativo(inteligencia + trabajo.inteligencia),
-    job = trabajo) 
+    copy(HP = HP + trabajo.HP,
+    fuerza = fuerza + trabajo.fuerza,
+    velocidad = velocidad + trabajo.velocidad,
+    inteligencia = inteligencia + trabajo.inteligencia,
+    job = Some(trabajo)) 
   }
   
+
   def modificarStats(h: Double, f: Double, v: Double ,i: Double):Heroe = {
-    copy(HP = evitarNegativo(HP + h),
-    fuerza = evitarNegativo(fuerza + f),
-    velocidad = evitarNegativo(velocidad + v),
-    inteligencia = evitarNegativo(inteligencia + i))
+    copy(HP = HP + h,
+    fuerza = fuerza + f,
+    velocidad = velocidad + v,
+    inteligencia = inteligencia + i)
   }
   
-  def agregarItem(unItem: Item):Heroe = copy(inventario = inventario.equipar(this, unItem))
+  def stats = (("hp",HP),("fuerza",fuerza),("velocidad",velocidad),("inteligencia",inteligencia))
   
-  def stats() ={
-    (("hp",HP),("fuerza",fuerza),("velocidad",velocidad),("inteligencia",inteligencia))
-  }
-  
+  def equipar(unItem: Item):Heroe = copy(inventario = inventario.equiparItem(unItem, this))  
+    
+    
 }

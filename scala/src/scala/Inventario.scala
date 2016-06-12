@@ -1,78 +1,57 @@
 package scala
 
-import scala.collection.mutable.ListBuffer
-
-class Inventario(var cabeza: Cabeza = null, var armadura: Armadura = null, 
-                 var armaSimple: (ArmaSimple,ArmaSimple) = null,
-                 var armaDoble: ArmaDoble = null, var talismanes: ListBuffer[Talisman] = null,
-                 var items: ListBuffer[Item] = ListBuffer()) {
-  
-  def equipar(heroe: Heroe, item: Item):Inventario = item match{
-    case Cabeza() => equiparCabeza(heroe,item.asInstanceOf[Cabeza])
-    case Armadura() => equiparArmadura(heroe, item.asInstanceOf[Armadura])
-    case ArmaSimple() => equiparArmaSimple(heroe,item.asInstanceOf[ArmaSimple])
-    case ArmaDoble() => equiparArmaDoble(heroe,item.asInstanceOf[ArmaDoble])
-    case Talisman() => equiparTalisman(heroe,item.asInstanceOf[Talisman])
-  }
-  
-  def equiparCabeza(heroe: Heroe, item: Cabeza):Inventario = {
-    if (cabeza != null) 
-      cabeza.desequipar(heroe)
-  
-    cabeza = item
-    item.equipar(heroe)
-    items += item
-    this
-  }
-  
-  def equiparArmadura(heroe: Heroe, item: Armadura):Inventario = {
-    if (armadura != null) armadura.desequipar(heroe)
-    armadura = item
-    item.equipar(heroe)
-    items += item
-    this
-  }
-  
-  def equiparArmaSimple(heroe: Heroe, item: ArmaSimple):Inventario = { 
-    if (armaDoble != null)
-      armaDoble.desequipar(heroe)  
-      
-    armaSimple match {
-      case (null, arma2) => armaSimple = (item, arma2)
-      case (arma1, null) => armaSimple = (arma1, item)
-      case null => armaSimple = (item, null)
-      case (arma1, arma2) => 
-        arma1.desequipar(heroe)
-        armaSimple = (item, arma2)
+case class Inventario(var cabeza: Option[Item] = None, var brazos: (Option[Item] , Option[Item]) = (None, None),
+    var torso: Option[Item] = None, var talismanes: List[Item] = Nil) {
+ 
+  def equiparItem(item: Item, heroe: Heroe):Inventario = {
+    if (item.cumpleCondicion(heroe)) {
+      item match {
+        case Cabeza() => ocuparCabeza(item)
+        case Torso() => ocuparTorso(item)
+        case Brazo() => 
+          if(brazoOcupado) desocuparBrazo
+          ocuparBrazo(item)
+        case Brazos() => ocuparBrazos(item)
+        case Talisman() => agregarTalisman(item)
+      }
     }
-    item.equipar(heroe)
-    items += item
-    this
+    else this
   }
   
-  def equiparArmaDoble(heroe: Heroe, item: ArmaDoble):Inventario = {
-    if (armaDoble != null)
-      armaDoble.desequipar(heroe)
-      
-    armaSimple match {
-      case null =>
-      case (null, arma2) => arma2.desequipar(heroe)
-      case (arma1, null) => arma1.desequipar(heroe)
-      case (arma1, arma2) => 
-        arma1.desequipar(heroe)
-        arma2.desequipar(heroe)
-    }
-    item.equipar(heroe)
-    armaDoble = item
-    items += item
-    this
+  def agregarTalisman(unTalisman: Item):Inventario = copy(talismanes = unTalisman :: talismanes)  
+  
+  def ocuparCabeza(item: Item):Inventario = copy(cabeza = Some(item))
+  def ocuparTorso(item: Item):Inventario = copy(torso = Some(item))
+  def ocuparBrazos(item: Item):Inventario = copy(brazos = (Some(item), Some(item)))
+  def ocuparBrazo(item: Item):Inventario = brazos match {
+    case (None, None) => copy(brazos = (Some(item), None))
+    case (None, unItem) => copy(brazos = (Some(item), unItem))
+    case (unItem, None) => copy(brazos = (unItem, Some(item)))
+    case (unItem, otroItem) => this
   }
   
-  def equiparTalisman(heroe: Heroe, item: Talisman):Inventario = {
-    talismanes += item
-    item.equipar(heroe)
-    items += item
-    this
+  def desocuparBrazo = brazos match {
+    case (None, None) =>
+    case (None, unItem) => 
+    case (unItem, None) =>
+    case (unItem, otroItem) => 
+      if(unItem == otroItem) brazos = (None, None) 
+      else brazos = (None, otroItem)
   }
-  
+   
+  def cabezaOcupada = cabeza.isDefined
+  def torsoOcupado = torso.isDefined
+  def brazoOcupado = brazos match {
+    case (Some(_), Some(_)) => true
+    case (Some(_), None) => false
+    case (None, Some(_)) => false
+    case (None, None) => false
+  }
+  def brazosOcupados = brazos match {
+    case (Some(_),Some(_)) => true
+    case (Some(_), None) => true
+    case (None, Some(_)) => true
+    case (None, None) => false
+  }
+ 
 }
