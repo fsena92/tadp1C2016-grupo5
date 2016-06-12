@@ -21,7 +21,16 @@ case class Heroe(val HP: Double, val fuerza: Double, val velocidad: Double, val 
   
   def stats = (("hp",HP),("fuerza",fuerza),("velocidad",velocidad),("inteligencia",inteligencia))
   
-  def equipar(unItem: Item):Heroe = copy(inventario = inventario.equiparItem(unItem, this))  
+  def equipar(unItem: Item):Heroe = {
+    
+    val heroeIntermedio = unItem.equipar(this)
+    copy(inventario = inventario.equiparItem(unItem, this),
+        HP = heroeIntermedio.HP,
+        fuerza = heroeIntermedio.fuerza,
+        velocidad = heroeIntermedio.velocidad,
+        inteligencia = heroeIntermedio.inteligencia)
+    
+  }
     
     
 }

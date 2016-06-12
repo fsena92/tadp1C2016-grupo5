@@ -34,9 +34,7 @@ case class Inventario(var cabeza: Option[Item] = None, var brazos: (Option[Item]
     case (None, None) =>
     case (None, unItem) => 
     case (unItem, None) =>
-    case (unItem, otroItem) => 
-      if(unItem == otroItem) brazos = (None, None) 
-      else brazos = (None, otroItem)
+    case (unItem, otroItem) => if(unItem == otroItem) brazos = (None, None) else brazos = (None, otroItem)
   }
    
   def cabezaOcupada = cabeza.isDefined
@@ -52,6 +50,21 @@ case class Inventario(var cabeza: Option[Item] = None, var brazos: (Option[Item]
     case (Some(_), None) => true
     case (None, Some(_)) => true
     case (None, None) => false
+  }
+  
+  def itemsEquipados : Int = {
+    val items = List(cabeza,torso,brazos) :: talismanes
+    items.foldLeft(0)((cantidadItems, item) => { item match {
+      case Cabeza() if(cabezaOcupada) => cantidadItems + 1
+      case Torso() if(torsoOcupado) => cantidadItems + 1
+      case Talisman() => cantidadItems + 1
+      case Brazos() => brazos match {
+          case (Some(item), Some(otroItem)) => if (item == otroItem) cantidadItems + 1 else cantidadItems + 2
+          case (Some(_), None) => cantidadItems + 1
+          case (None, Some(_)) => cantidadItems + 1
+          case (None, None) => cantidadItems
+          }
+      } })
   }
  
 }
