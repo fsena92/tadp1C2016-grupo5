@@ -15,7 +15,7 @@ object Main {
     //println(aquiles.equipar(CascoVikingo).stats)
     
 
-    
+   println( spiderman.asignarTrabajo(Guerrero).equipar(CascoVikingo).equipar(EscudoAntiRobo).HP)
        
   }   
   

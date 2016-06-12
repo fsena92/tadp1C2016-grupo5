@@ -20,7 +20,6 @@ class UnTest  {
     ironMan = new Heroe(50,10,40,100)
     capitanAmerica = new Heroe(70,30,60,20)
     
-    
   }
   
   @Test
@@ -46,6 +45,11 @@ class UnTest  {
   @Test
   def heroeSeEquipaCascoVikingoYCambiaSusStats = {
      assertEquals(spiderman.equipar(CascoVikingo).HP, 20, 0.01)
+  }
+  
+  @Test
+  def heroeSeEquipaCascoVikingoYEscudoAntiRoboYCambiaSusStats = {
+     assertEquals(spiderman.asignarTrabajo(Guerrero).equipar(CascoVikingo).equipar(EscudoAntiRobo).HP, 50, 0.01)
   }
 
   
