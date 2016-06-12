@@ -30,7 +30,10 @@ object EscudoAntiRobo extends Brazo {
     case Ladron => false
     case _ => heroe.fuerza >= 20
   }
-  override def equipar(heroe: Heroe) = heroe.modificarStats(20, 0, 0, 0)
+  override def equipar(heroe: Heroe) = { 
+    if(cumpleCondicion(heroe)) heroe.modificarStats(20, 0, 0, 0)
+    else heroe
+  }
   override def desequipar(heroe: Heroe) = heroe.modificarStats(-20, 0, 0, 0)
 }
 
@@ -40,7 +43,10 @@ object PalitoMagico extends Brazo {
     case Ladron => heroe.inteligencia > 30
     case _ => false
   }
-  override def equipar(heroe: Heroe) = heroe.modificarStats(0, 0, 0, 20)
+  override def equipar(heroe: Heroe) = { 
+    if(cumpleCondicion(heroe)) heroe.modificarStats(0, 0, 0, 20)
+    else heroe
+  }
   override def desequipar(heroe: Heroe) = heroe.modificarStats(0, 0, 0, -20)
 }
 
@@ -51,7 +57,10 @@ object ArcoViejo extends Brazos {
 
 object CascoVikingo extends Cabeza {
   override def cumpleCondicion(heroe: Heroe) = heroe.fuerza > 30
-  override def equipar(heroe: Heroe): Heroe = heroe.modificarStats(10, 0, 0, 0)
+  override def equipar(heroe: Heroe): Heroe = { 
+    if(cumpleCondicion(heroe)) heroe.modificarStats(10, 0, 0, 0)
+     else heroe
+  }
   override def desequipar(heroe: Heroe): Heroe = heroe.modificarStats(-10, 0, 0, 0)
 }
 

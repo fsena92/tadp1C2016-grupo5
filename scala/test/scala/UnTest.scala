@@ -51,6 +51,11 @@ class UnTest  {
   def heroeSeEquipaCascoVikingoYEscudoAntiRoboYCambiaSusStats = {
      assertEquals(spiderman.asignarTrabajo(Guerrero).equipar(CascoVikingo).equipar(EscudoAntiRobo).HP, 50, 0.01)
   }
+  
+  @Test
+  def heroeNoCumpleCondicion = {
+     assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(CascoVikingo).HP, 60, 0.01)
+  }
 
   
   
