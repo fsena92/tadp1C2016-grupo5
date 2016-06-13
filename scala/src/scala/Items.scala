@@ -57,7 +57,7 @@ object CascoVikingo extends Cabeza {
   override def cumpleCondicion(heroe: Heroe) = heroe.fuerza > 30
   override def equipar(heroe: Heroe): Heroe = { 
     if(cumpleCondicion(heroe)) heroe.modificarStats(10, 0, 0, 0)
-     else heroe
+    else heroe
   }
   override def desequipar(heroe: Heroe): Heroe = heroe.modificarStats(-10, 0, 0, 0)
 }
