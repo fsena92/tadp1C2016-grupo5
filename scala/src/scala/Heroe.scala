@@ -29,9 +29,9 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
     else positivos(inventario.inteligenciaFinal(this, inteligenciaBase))
   }
   
-  def positivos(p:Double) = {
-    if(p < 1) 1
-    else p
+  def positivos(valorStat: Double) = {
+    if(valorStat < 1) 1
+    else valorStat
   }
   
   
