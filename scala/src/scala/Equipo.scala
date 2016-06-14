@@ -7,7 +7,7 @@ class Equipo(val nombre: String, var pozoComun: Double, var heroes: List[Heroe] 
   }
 
   def reemplazarMiembro(unMiembro: Heroe, nuevoMiembro: Heroe) {
-    heroes = heroes.filter(h => h != unMiembro)
+    heroes = heroes.filterNot(h => h equals unMiembro)
     agregarMiembro(nuevoMiembro)
   }
   
@@ -33,5 +33,4 @@ class Equipo(val nombre: String, var pozoComun: Double, var heroes: List[Heroe] 
     else pozoComun = pozoComun + item.valor
   }
   
-
 }

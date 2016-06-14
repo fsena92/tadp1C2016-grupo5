@@ -11,9 +11,6 @@ class UnTest  {
    var capitanAmerica:Heroe = null
    var wolverine:Heroe = null
    
-   
- 
-  
   @Before
   def setup = {
     spiderman = new Heroe(10,35,60,40)
@@ -23,92 +20,134 @@ class UnTest  {
   }
   
   @Test
-  def heroeSeConvierteEnGuerrero = {
+  def heroeSeConvierteEnGuerrero {
      assertEquals(Some(Guerrero) ,capitanAmerica.asignarTrabajo(Guerrero).job)    
   }
   
   @Test
-  def heroeCambiaDeStatsCuandoSeConvierteEnMago = {
-    assertEquals(40 ,capitanAmerica.asignarTrabajo(Mago).inteligencia, 0.01)
+  def heroeCambiaDeStatsCuandoSeConvierteEnMago {
+    assertEquals(40 ,capitanAmerica.asignarTrabajo(Mago).inteligenciaFinal, 0.01)
   }
   
   @Test
-  def heroeNoSeEquipaCascoVikingoPorNoCumplirCondicion = {
-     assertEquals(ironMan.equipar(CascoVikingo).inventario.cabeza, None)
+  def heroeNoSeEquipaCascoVikingoPorNoCumplirCondicion {
+     assertFalse(ironMan.equipar(CascoVikingo).inventario.items.contains(CascoVikingo))
   }
   
   @Test
-  def heroeSeEquipaCascoVikingoYCumpleCondicion = {
-     assertEquals(spiderman.equipar(CascoVikingo).inventario.cabeza.get, CascoVikingo)
+  def heroeSeEquipaCascoVikingoYCumpleCondicion {
+     assertTrue(spiderman.equipar(CascoVikingo).inventario.items.contains(CascoVikingo))
   }
   
   @Test
-  def heroeSeEquipaCascoVikingoYCambiaSusStats = {
-     assertEquals(spiderman.equipar(CascoVikingo).HP, 20, 0.01)
+  def heroeSeEquipaCascoVikingoYCambiaSusStats {
+     assertEquals(spiderman.equipar(CascoVikingo).HPFinal, 20, 0.01)
   }
   
   @Test
-  def heroeSeEquipaCascoVikingoYEscudoAntiRoboYCambiaSusStats = {
-     assertEquals(spiderman.asignarTrabajo(Guerrero).equipar(CascoVikingo).equipar(EscudoAntiRobo).HP, 50, 0.01)
+  def heroeSeEquipaCascoVikingoYEscudoAntiRoboYCambiaSusStats {
+     assertEquals(spiderman.asignarTrabajo(Guerrero).equipar(CascoVikingo).equipar(EscudoAntiRobo).
+         HPFinal, 50, 0.01)
   }
   
   @Test
-  def heroeNoCumpleCondicion = {
-     assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(CascoVikingo).HP, 60, 0.01)
+  def heroeNoCumpleCondicion {
+     assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(CascoVikingo).HPFinal, 60, 0.01)
   }
   
   @Test
-  def equiparEspadaDeLaVida = {
-    assertEquals(ironMan.equipar(EspadaDeLaVida).fuerza, 60, 0.01)
+  def equiparEspadaDeLaVida {
+    assertEquals(ironMan.equipar(EspadaDeLaVida).fuerzaFinal, 50, 0.01)
   }
 
-   @Test
-  def equiparTalismanMinimalismo = {
-    assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(Minimalismo).HP, 110, 0.01)
+  @Test
+  def equiparTalismanMinimalismo {
+    assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(Minimalismo).HPFinal, 110, 0.01)
   }
   
   @Test
-  def equiparUnItemYUnTalisman = {
-    assertEquals(spiderman.asignarTrabajo(Guerrero).equipar(CascoVikingo).equipar(Minimalismo).HP, 70, 0.01)
+  def equiparUnItemYUnTalisman {
+    assertEquals(spiderman.asignarTrabajo(Guerrero).equipar(CascoVikingo).equipar(Minimalismo).
+        HPFinal, 70, 0.01)
   }
   
   @Test
-  def heroeSeConvierteEnMagoYPuedeUsarCascoVikingo = {
-     assertEquals(spiderman.asignarTrabajo(Mago).equipar(CascoVikingo).HP, 20, 0.01)
+  def heroeSeConvierteEnMagoYPuedeUsarCascoVikingo {
+     assertEquals(spiderman.asignarTrabajo(Mago).equipar(CascoVikingo).HPFinal, 20, 0.01)
   }
   
   @Test
-  def heroeSeEquipaArmadura = {
-     assertEquals(ironMan.equipar(ArmaduraEleganteSport).velocidad, 70, 0.01)
+  def heroeSeEquipaArmadura {
+     assertEquals(ironMan.equipar(ArmaduraEleganteSport).velocidadFinal, 70, 0.01)
   }
   
   @Test
-  def heroeSeEquipaPaloMagicoSiendoLadron = {
-     assertEquals(spiderman.asignarTrabajo(Ladron).equipar(PalitoMagico).inteligencia, 60, 0.01)
+  def heroeSeEquipaPaloMagicoSiendoLadron {
+     assertEquals(spiderman.asignarTrabajo(Ladron).equipar(PalitoMagico).inteligenciaFinal, 60, 0.01)
   }
   
   @Test
-  def heroeSiendoGuerreroNoPuedeEquiparseEscudoSinFuerzaBaseNecesaria = {
-     assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(EscudoAntiRobo).HP, 60, 0.01)
+  def heroeSiendoGuerreroNoPuedeEquiparseEscudoSinFuerzaBaseNecesaria {
+     assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(EscudoAntiRobo).HPFinal, 60, 0.01)
+  }
+
+  @Test
+  def heroeConVariosItemsEsAfectadoPorElTalismanDelMinimalismo {
+     assertEquals(capitanAmerica.equipar(EspadaDeLaVida).equipar(ArmaduraEleganteSport).
+         equipar(Minimalismo).HPFinal, 70, 0.01)
   }
   
   @Test
-  def heroeConVariosItemsEsAfectadoPorElTalismanDelMinimalismo = {
-     assertEquals(capitanAmerica.equipar(VinchaDelBufaloDelAgua).equipar(ArmaduraEleganteSport).equipar(Minimalismo).HP, 70, 0.01)
+  def heroeSeEquipaEspadaDeLaVida {
+     assertEquals(wolverine.asignarTrabajo(Guerrero).equipar(EspadaDeLaVida).fuerzaFinal, 1010, 0.01)
   }
   
   @Test
-  def heroeSeEquipaEspadaDeLaVida = {
-     assertEquals(wolverine.asignarTrabajo(Guerrero).equipar(EspadaDeLaVida).fuerza, 1010, 0.01)
+  def heroeSeEquipaTalismanDeDedicacion {
+     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).HPFinal, 81.5, 0.01) 
+     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).fuerzaFinal, 46.5, 0.01)
+     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).velocidadFinal, 61.5, 0.01)
+     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).inteligenciaFinal, 11.5, 0.01) 
   }
   
   @Test
-  def heroeSeEquipaTalismanDeDedicacion = {
-     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).HP, 81.5, 0.01) 
-     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).fuerza, 46.5, 0.01)
-     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).velocidad, 61.5, 0.01)
-     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).inteligencia, 11.5, 0.01) 
+  def noCumpleConEquiparEspadaYEscudo {
+    assertEquals(ironMan.equipar(EscudoAntiRobo).equipar(PalitoMagico).cantidadItems, 0, 0.001)
   }
+  
+  @Test
+  def cumpleConEquiparEspadaYEscudo {
+    assertEquals(capitanAmerica.asignarTrabajo(Mago).equipar(EscudoAntiRobo).
+        equipar(PalitoMagico).cantidadItems, 2, 0.01)
+  }
+  
+  @Test
+  def equiparArmaDobleReemplazaArmaSimple {
+    assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(PalitoMagico).
+        equipar(ArcoViejo).cantidadItems, 1, 0.001)
+  }
+  
+  @Test
+  def equiparTresArmasSimplesDiferentes {
+    assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(PalitoMagico).
+        equipar(EspadaDeLaVida).cantidadItems, 2, 0.001)
+  }
+  
+  @Test
+  def equiparDosArmasSimplesIgualesYUnaDiferenteQueReemplazaAUna {
+    assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(EscudoAntiRobo).
+        equipar(EspadaDeLaVida).cantidadItems, 2, 0.001)
+  }
+  
+  @Test
+  def equiparDosArmasSimplesIgualesYUnaDiferenteQueReemplazaAUnaObtengoHP {
+    assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(EscudoAntiRobo).
+        equipar(EspadaDeLaVida).HPFinal, 90, 0.001)
+  }
+  
+  
+  
+  
   
   
 }
