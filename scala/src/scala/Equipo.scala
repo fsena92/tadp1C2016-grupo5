@@ -15,7 +15,7 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
   def lider: Option[Heroe] = {    
     mejorHeroeSegun(heroe => heroe.job match {
       case None => 0
-      case _ => heroe.job.get.statPrincipal
+      case _ => heroe.statPrincipal
     })
   }
  
@@ -31,7 +31,7 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
   def obtenerItem(item: Item) = {
     val maximoHeroe = mejorHeroeSegun(heroe => {
       if(heroe.job.isDefined)
-        heroe.equipar(item).job.get.statPrincipal - heroe.job.get.statPrincipal
+        heroe.equipar(item).statPrincipal - heroe.statPrincipal
       else 0
     })  
     if(maximoHeroe.isDefined) reemplazarMiembro(maximoHeroe.get, maximoHeroe.get.equipar(item))

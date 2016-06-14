@@ -35,4 +35,15 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
   }
   
   
+   def statPrincipal: Double = job.get._statPrincipal match {
+     case "Inteligencia" => inteligenciaFinal
+     case "HP" => HPFinal
+     case "Fuerza" => fuerzaFinal
+     case "Velocidad" => velocidadFinal
+  }
+  
+  
+  
+  
+  
 }

@@ -33,7 +33,7 @@ case class Inventario(var items: List[Item] = Nil) {
     else copy(item :: items.filterNot(x => x.isInstanceOf[ArmaDoble]))
   }
   
-  def fuerzaFinal(heroe:Heroe, parametro:Double): Double = {
+  def fuerzaFinal(heroe: Heroe, parametro: Double): Double = {
     items.foldLeft(parametro)((param, item) => item.fuerza(heroe, param))
   } 
   
