@@ -182,6 +182,13 @@ class UnTest  {
     assertEquals(equipo.lider.get, capitanAmerica.asignarTrabajo(Guerrero))
   }
   
+  @Test
+  def incrementarElPozoComunDelEquipo {
+    equipo.incrementarPozo(CascoVikingo)
+    assertEquals(equipo.pozoComun, 5, 0.01)
+  }
+  
+  
   
   
   

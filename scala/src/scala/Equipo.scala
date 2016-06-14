@@ -19,24 +19,23 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
     })
   }
  
-  def mejorHeroeSegun(cuantificador:Heroe => Double): Option[Heroe] = {
+  def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
     val maximo = heroes.map(h => cuantificador(h)).max
     val heroe = heroes.filter(h => cuantificador(h) == maximo)
     if (heroe.size > 1) None
     else Some(heroe.head)
   }
   
+  def incrementarPozo(item: Item) = pozoComun = pozoComun + item.valor 
+  
   def obtenerItem(item: Item) = {
-    val maximoHeroe = mejorHeroeSegun((heroe: Heroe) => {
-      if(heroe.job.isDefined){
-        val otroHeroe = heroe.equipar(item)
-        otroHeroe.job.get.statPrincipal - heroe.job.get.statPrincipal
-      }
+    val maximoHeroe = mejorHeroeSegun(heroe => {
+      if(heroe.job.isDefined)
+        heroe.equipar(item).job.get.statPrincipal - heroe.job.get.statPrincipal
       else 0
-    })
-        
+    })  
     if(maximoHeroe.isDefined) reemplazarMiembro(maximoHeroe.get, maximoHeroe.get.equipar(item))
-    else pozoComun = pozoComun + item.valor
+    else incrementarPozo(item)
   }
   
 }
