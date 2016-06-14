@@ -1,6 +1,7 @@
 package scala
 
-class Equipo(val nombre: String, var pozoComun: Double, var heroes: List[Heroe] = Nil, val misiones: List[Mision]) {
+class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: Double = 0, 
+             val misiones: List[Mision] = Nil) {
   
   def agregarMiembro(unMiembro: Heroe) {
     heroes = unMiembro :: heroes 
@@ -11,8 +12,13 @@ class Equipo(val nombre: String, var pozoComun: Double, var heroes: List[Heroe] 
     agregarMiembro(nuevoMiembro)
   }
   
-  def lider: Option[Heroe] = mejorHeroeSegun((heroe:Heroe) => heroe.job.get.statPrincipal)
-  
+  def lider: Option[Heroe] = {    
+    mejorHeroeSegun(heroe => heroe.job match {
+      case None => 0
+      case _ => heroe.job.get.statPrincipal
+    })
+  }
+ 
   def mejorHeroeSegun(cuantificador:Heroe => Double): Option[Heroe] = {
     val maximo = heroes.map(h => cuantificador(h)).max
     val heroe = heroes.filter(h => cuantificador(h) == maximo)

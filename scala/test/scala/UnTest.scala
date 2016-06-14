@@ -10,6 +10,7 @@ class UnTest  {
    var ironMan:Heroe = null
    var capitanAmerica:Heroe = null
    var wolverine:Heroe = null
+   var equipo: Equipo = null
    
   @Before
   def setup = {
@@ -17,6 +18,7 @@ class UnTest  {
     ironMan = new Heroe(50,10,40,100)
     capitanAmerica = new Heroe(70,30,60,20)
     wolverine = new Heroe(1000,60,50,20)
+    equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
   }
   
   @Test
@@ -143,6 +145,41 @@ class UnTest  {
   def equiparDosArmasSimplesIgualesYUnaDiferenteQueReemplazaAUnaObtengoHP {
     assertEquals(capitanAmerica.equipar(EscudoAntiRobo).equipar(EscudoAntiRobo).
         equipar(EspadaDeLaVida).HPFinal, 90, 0.001)
+  }
+  
+  @Test 
+  def HeroeCambiaDeTrabajo {
+    assertEquals(capitanAmerica.asignarTrabajo(Mago).asignarTrabajo(Guerrero).job.get, Guerrero) 
+  }
+  
+  @Test
+  def MejorHeroeSegun {
+    assertEquals(equipo.mejorHeroeSegun { heroe => heroe.HPBase }.get, ironMan)
+  }
+  
+  @Test
+  def ObtenerMiembro {
+    equipo.agregarMiembro(wolverine)
+    assertTrue(equipo.heroes.contains(wolverine)) 
+  }
+  
+  @Test
+  def SeReemplazaUnMiembroDelEquipoPorOtro {
+    equipo.reemplazarMiembro(spiderman, capitanAmerica)
+    assertFalse(equipo.heroes.contains(spiderman))
+    assertTrue(equipo.heroes.contains(capitanAmerica))
+  }
+  
+  @Test
+  def EquipoNoTieneLiderDefinido {
+    assertEquals(equipo.lider, None)
+  }
+  
+  @Test // el test esta bien pero, da azul porque esta mal delegado el statPrincipal de Trabajo
+  def EquipoTieneUnLider {
+    equipo.agregarMiembro(capitanAmerica.asignarTrabajo(Guerrero))
+    equipo.agregarMiembro(wolverine.asignarTrabajo(Mago))
+    assertEquals(equipo.lider.get, capitanAmerica.asignarTrabajo(Guerrero))
   }
   
   
