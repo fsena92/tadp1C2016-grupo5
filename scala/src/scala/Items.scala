@@ -86,7 +86,7 @@ object VinchaDelBufaloDelAgua extends Cabeza {
 object Dedicacion extends Talisman {
   override val valor: Double = 40
   def porcentaje(heroe: Heroe): Double = heroe.job match {
-    case Some(_) => heroe.statPrincipal * 0.1
+    case Some(_) => heroe.desequipar(this).statPrincipal * 0.1
     case _ => 0
   }
   override def HP(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)

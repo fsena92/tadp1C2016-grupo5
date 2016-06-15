@@ -1,5 +1,8 @@
 package scala
 
+import scala.util.{Try, Success, Failure}
+
+
 class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: Double = 0, 
              val misiones: List[Mision] = Nil) {
   
@@ -28,7 +31,7 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
   
   def incrementarPozo(item: Item) = pozoComun = pozoComun + item.valor 
   
-  def obtenerItem(item: Item) = {
+  def obtenerItem(item: Item) {
     val maximoHeroe = mejorHeroeSegun(heroe => {
       if(heroe.job.isDefined)
         heroe.equipar(item).statPrincipal - heroe.statPrincipal
@@ -38,4 +41,41 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
     else incrementarPozo(item)
   }
   
+  def equiparATodos(item: Item) {
+    heroes = heroes.map(h => h.equipar(item))
+  }
+  
+  def unMiembroRealizaTareaSiPuede(tarea: Tarea): Boolean = {
+    mejorHeroeSegun(h => tarea.facilidadPara(h, this) match {
+      case Success(_) => tarea.facilidadPara(h, this).get
+      case Failure(_) => 0
+    }) match {
+      case None => false
+      case Some(heroe) => {
+        heroe.realizarTarea(tarea)
+        true
+      }
+    }
+  }
+  
+  // TODO: ver este reclamarRecompensa
+  def reclamarRecompensa = 1
+  
+  def realizarMision(mision: Mision): Option[Tarea] = {
+    val equipoAnterior = heroes
+    val tareasRealizadas = mision.tareas.takeWhile(t => unMiembroRealizaTareaSiPuede(t))
+    val tareasFallidas = mision.tareas.filterNot(t => tareasRealizadas.contains(t))
+    if (mision.tareas.size == tareasRealizadas.size) {
+      reclamarRecompensa
+      None
+    }
+    else {
+      heroes = equipoAnterior
+      Some(tareasFallidas.head)
+    }
+  }
+  
 }
+
+
+

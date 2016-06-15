@@ -10,14 +10,16 @@ class UnTest  {
    var ironMan:Heroe = null
    var capitanAmerica:Heroe = null
    var wolverine:Heroe = null
+   var kratos: Heroe = null
    var equipo: Equipo = null
    
   @Before
   def setup = {
-    spiderman = new Heroe(10,35,60,40)
-    ironMan = new Heroe(50,10,40,100)
-    capitanAmerica = new Heroe(70,30,60,20)
-    wolverine = new Heroe(1000,60,50,20)
+    kratos = new Heroe(50, 45, 10, 10)
+    spiderman = new Heroe(10, 35, 60, 40)
+    ironMan = new Heroe(50, 10, 40, 100)
+    capitanAmerica = new Heroe(70, 30, 60, 20)
+    wolverine = new Heroe(1000, 60, 50, 20)
     equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
   }
   
@@ -106,10 +108,10 @@ class UnTest  {
   
   @Test
   def heroeSeEquipaTalismanDeDedicacion {
-     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).HPFinal, 81.5, 0.0001) 
-     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).fuerzaFinal, 46.5, 0.0001)
-     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).velocidadFinal, 61.5, 0.0001)
-     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).inteligenciaFinal, 11.5, 0.0001) 
+     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).HPFinal, 84.5, 0.0001) 
+     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).fuerzaFinal, 49.5, 0.0001)
+     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).velocidadFinal, 64.5, 0.0001)
+     assertEquals(capitanAmerica.asignarTrabajo(Guerrero).equipar(Dedicacion).inteligenciaFinal, 14.5, 0.0001) 
   }
   
   @Test
@@ -175,7 +177,7 @@ class UnTest  {
     assertEquals(equipo.lider, None)
   }
   
-  @Test // el test esta bien pero, da azul porque esta mal delegado el statPrincipal de Trabajo
+  @Test
   def EquipoTieneUnLider {
     equipo.agregarMiembro(capitanAmerica.asignarTrabajo(Guerrero))
     equipo.agregarMiembro(wolverine.asignarTrabajo(Mago))
@@ -187,12 +189,32 @@ class UnTest  {
     equipo.incrementarPozo(CascoVikingo)
     assertEquals(equipo.pozoComun, 5, 0.01)
   }
+  //TODO: probar obtenerItem
+  
+  @Test
+  def HeroeRealizaTareaNoAfectaSusStats {
+    assertEquals(wolverine.realizarTarea(PelearContraMonstruo).HPFinal, 1000, 0.01)
+  }
+  
+  @Test 
+  def HeroeRealizaTareaYAfectaSusStats {
+    assertEquals(ironMan.asignarTrabajo(Ladron).realizarTarea(PelearContraMonstruo).HPFinal, 35, 0.01)
+  }
+  
+  @Test
+  def HeroeFuerzaPuertaSeModificanSusStats {
+    assertEquals(ironMan.asignarTrabajo(Guerrero).realizarTarea(ForzarPuerta).HPFinal, 55, 0.01)
+    assertEquals(ironMan.asignarTrabajo(Guerrero).realizarTarea(ForzarPuerta).fuerzaFinal, 26, 0.01)
+  }
   
   
   
   
   
   
+  
+  
+ 
   
 }
 

@@ -1,13 +1,7 @@
 package scala
 
-class Mision(tareas:List[Tarea]) {
+class Mision(val tareas: List[Tarea], val recompensa: Any) {
   
-  def realizarMision = {
-    
-    
-    
-    
-  }
   
   
   
