@@ -1,0 +1,11 @@
+package scala
+
+class Taberna {
+  
+  
+  
+  
+  
+  
+  
+}

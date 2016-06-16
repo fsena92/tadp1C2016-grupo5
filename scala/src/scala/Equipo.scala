@@ -3,18 +3,15 @@ package scala
 import scala.util.{Try, Success, Failure}
 
 
-class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: Double = 0, 
+case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: Double = 0, 
              val misiones: List[Mision] = Nil) {
   
-  def agregarMiembro(unMiembro: Heroe) {
-    heroes = unMiembro :: heroes 
-  }
+  def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
 
   def miembrosConTrabajo = heroes.filter(h => h.job.isDefined)
   
-  def reemplazarMiembro(unMiembro: Heroe, nuevoMiembro: Heroe) {
-    heroes = heroes.filterNot(h => h equals unMiembro)
-    agregarMiembro(nuevoMiembro)
+  def reemplazarMiembro(unMiembro: Heroe, nuevoMiembro: Heroe):Equipo =  {
+    copy(heroes = nuevoMiembro :: heroes.filterNot(h => h equals unMiembro))
   }
   
   def lider: Option[Heroe] = {    
@@ -31,9 +28,9 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
     else Some(heroe.head)
   }
   
-  def incrementarPozo(item: Item) = pozoComun = pozoComun + item.valor 
+  def incrementarPozo(item: Item) = copy(pozoComun = pozoComun + item.valor) 
   
-  def obtenerItem(item: Item) {
+  def obtenerItem(item: Item): Equipo = {
     val maximoHeroe = mejorHeroeSegun(heroe => {
       if(heroe.job.isDefined)
         heroe.equipar(item).statPrincipal - heroe.statPrincipal
@@ -43,9 +40,7 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
     else incrementarPozo(item)
   }
   
-  def equiparATodos(item: Item) {
-    heroes = heroes.map(h => h.equipar(item))
-  }
+  def equiparATodos(item: Item) = copy(heroes = heroes.map(h => h.equipar(item)))
   
   def unMiembroRealizaTareaSiPuede(tarea: Tarea): Option[Heroe] = {
     mejorHeroeSegun(h => tarea.facilidadPara(h, this) match {
@@ -58,23 +53,30 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
         Some(heroe.realizarTarea(tarea))
     }
   }
-  
-  // TODO: ver este reclamarRecompensa
-  def reclamarRecompensa = 1
+    
+  def cobrarRecompensa(mision: Mision):Equipo = mision.recompensa match {
+    case GanarOroParaElPozoComun(cantidadOro) => copy(pozoComun = pozoComun + cantidadOro)
+    case EncontrarUnItem(item) => obtenerItem(item)
+    case IncrementarStats(condicion, recompensaDeStats) => 
+      copy(heroes = heroes.filter(h => condicion(h)).map(h => h.agregarRecompensaStats(recompensaDeStats)))
+    case EncontrarNuevoMiembro(nuevoMiembro) => agregarMiembro(nuevoMiembro)
+  }
   
   def realizarMision(mision: Mision): Option[Tarea] = {
-    val equipoAnterior = heroes
+    val equipoActual = heroes
     val tareasRealizadas = mision.tareas.takeWhile(t => unMiembroRealizaTareaSiPuede(t).isDefined)
     val tareasFallidas = mision.tareas.filterNot(t => tareasRealizadas.contains(t))
     if (mision.tareas.size == tareasRealizadas.size) {
-      reclamarRecompensa
+      cobrarRecompensa(mision)
       None
     }
     else {
-      heroes = equipoAnterior
+      copy(heroes = equipoActual)
       Some(tareasFallidas.head)
     }
   }
+  
+  
   
 }
 

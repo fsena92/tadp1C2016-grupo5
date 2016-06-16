@@ -173,15 +173,13 @@ class UnTest  {
   
   @Test
   def ObtenerMiembro {
-    equipo.agregarMiembro(wolverine)
-    assertTrue(equipo.heroes.contains(wolverine)) 
+    assertTrue(equipo.agregarMiembro(wolverine).heroes.contains(wolverine)) 
   }
   
   @Test
   def SeReemplazaUnMiembroDelEquipoPorOtro {
-    equipo.reemplazarMiembro(spiderman, capitanAmerica)
-    assertFalse(equipo.heroes.contains(spiderman))
-    assertTrue(equipo.heroes.contains(capitanAmerica))
+    assertFalse(equipo.reemplazarMiembro(spiderman, capitanAmerica).heroes.contains(spiderman))
+    assertTrue(equipo.reemplazarMiembro(spiderman, capitanAmerica).heroes.contains(capitanAmerica))
   }
   
   @Test
@@ -191,15 +189,13 @@ class UnTest  {
   
   @Test
   def EquipoTieneUnLider {
-    equipo.agregarMiembro(capitanAmerica.asignarTrabajo(Guerrero))
-    equipo.agregarMiembro(wolverine.asignarTrabajo(Mago))
-    assertEquals(equipo.lider.get, capitanAmerica.asignarTrabajo(Guerrero))
+    assertEquals(equipo.agregarMiembro(capitanAmerica.asignarTrabajo(Guerrero)).
+        agregarMiembro(wolverine.asignarTrabajo(Mago)).lider.get, capitanAmerica.asignarTrabajo(Guerrero))
   }
   
   @Test
   def incrementarElPozoComunDelEquipo {
-    equipo.incrementarPozo(CascoVikingo)
-    assertEquals(equipo.pozoComun, 5, 0.01)
+    assertEquals(equipo.incrementarPozo(CascoVikingo).pozoComun, 5, 0.01)
   }
   //TODO: probar obtenerItem
   
