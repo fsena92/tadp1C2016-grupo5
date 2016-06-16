@@ -53,7 +53,9 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
       case Failure(_) => 0
     }) match {
       case None => None
-      case Some(heroe) => Some(heroe.realizarTarea(tarea))
+      case Some(heroe) => 
+        reemplazarMiembro(heroe, heroe.realizarTarea(tarea))
+        Some(heroe.realizarTarea(tarea))
     }
   }
   
