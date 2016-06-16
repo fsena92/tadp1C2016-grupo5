@@ -47,16 +47,13 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
     heroes = heroes.map(h => h.equipar(item))
   }
   
-  def unMiembroRealizaTareaSiPuede(tarea: Tarea): Boolean = {
+  def unMiembroRealizaTareaSiPuede(tarea: Tarea): Option[Heroe] = {
     mejorHeroeSegun(h => tarea.facilidadPara(h, this) match {
       case Success(_) => tarea.facilidadPara(h, this).get
       case Failure(_) => 0
     }) match {
-      case None => false
-      case Some(heroe) => {
-        heroe.realizarTarea(tarea)
-        true
-      }
+      case None => None
+      case Some(heroe) => Some(heroe.realizarTarea(tarea))
     }
   }
   
@@ -65,7 +62,7 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
   
   def realizarMision(mision: Mision): Option[Tarea] = {
     val equipoAnterior = heroes
-    val tareasRealizadas = mision.tareas.takeWhile(t => unMiembroRealizaTareaSiPuede(t))
+    val tareasRealizadas = mision.tareas.takeWhile(t => unMiembroRealizaTareaSiPuede(t).isDefined)
     val tareasFallidas = mision.tareas.filterNot(t => tareasRealizadas.contains(t))
     if (mision.tareas.size == tareasRealizadas.size) {
       reclamarRecompensa
