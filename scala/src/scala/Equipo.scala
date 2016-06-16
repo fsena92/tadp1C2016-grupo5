@@ -10,6 +10,8 @@ class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: D
     heroes = unMiembro :: heroes 
   }
 
+  def miembrosConTrabajo = heroes.filter(h => h.job.isDefined)
+  
   def reemplazarMiembro(unMiembro: Heroe, nuevoMiembro: Heroe) {
     heroes = heroes.filterNot(h => h equals unMiembro)
     agregarMiembro(nuevoMiembro)

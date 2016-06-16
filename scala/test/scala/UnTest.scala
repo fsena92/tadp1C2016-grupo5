@@ -24,8 +24,8 @@ class UnTest  {
     capitanAmerica = new Heroe(70, 30, 60, 20)
     wolverine = new Heroe(1000, 60, 50, 20)
     equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
-    otroEquipo = new Equipo("otro", List(spiderman.asignarTrabajo(Ladron).equipar(PalitoMagico).equipar(EscudoAntiRobo),
-        wolverine.asignarTrabajo(Mago).equipar(EspadaDeLaVida), capitanAmerica.asignarTrabajo(Guerrero).equipar(CascoVikingo),
+    otroEquipo = new Equipo("otro", List(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo),
+        wolverine.asignarTrabajo(Ladron).equipar(EspadaDeLaVida), capitanAmerica.asignarTrabajo(Guerrero).equipar(CascoVikingo),
         kratos.equipar(VinchaDelBufaloDelAgua).equipar(ArcoViejo)))        
   }
   
@@ -52,6 +52,12 @@ class UnTest  {
   @Test
   def heroeSeEquipaCascoVikingoYCambiaSusStats {
      assertEquals(spiderman.equipar(CascoVikingo).HPFinal, 20, 0.01)
+  }
+  
+  @Test
+  def heroeEquipaDosArmasSimples {
+    assertEquals(wolverine.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo).
+        inventario.items.size, 2, 0.01)
   }
   
   @Test
@@ -252,7 +258,8 @@ class UnTest  {
   @Test
   def facilidadDeHereoQueRobaTalismanSiEquipoTieneLiderQueNoEsLadron {
     val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Mago), wolverine.asignarTrabajo(Mago)))
-    assertEquals(RobarTalisman(Maldito).facilidadPara(spiderman.asignarTrabajo(Ladron), unEquipo), Failure(ErrorRoboTalisman))
+    assertEquals(RobarTalisman(Maldito).facilidadPara(spiderman.asignarTrabajo(Ladron), unEquipo),
+        Failure(ErrorRoboTalisman))
   }
   
   @Test
@@ -260,6 +267,31 @@ class UnTest  {
     val unEquipo = new Equipo("equipo", List(spiderman, wolverine))
     assertEquals(RobarTalisman(Maldito).facilidadPara(spiderman, unEquipo), Failure(ErrorRoboTalisman))
   }
+  
+  @Test
+  def lider {
+    assertEquals(otroEquipo.lider.get, spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo)) 
+  }
+  
+  @Test
+  def EquipoNoPuedeRealizarTareaSuLiderNoEsLadri {
+    assertFalse(otroEquipo.unMiembroRealizaTareaSiPuede(RobarTalisman(Maldito)))
+  }
+  
+  @Test
+  def EquipoNoPuedePelearContraMonstruoNoHayCandidatoMejorSegun {
+    assertFalse(otroEquipo.unMiembroRealizaTareaSiPuede(PelearContraMonstruo))
+  }
+  
+  @Test
+  def EquipoPuedeRealizarLaTareaDeForzarPuerta {
+    assertTrue(otroEquipo.unMiembroRealizaTareaSiPuede(ForzarPuerta))
+  }
+  
+  
+  
+  
+  
 
   
   

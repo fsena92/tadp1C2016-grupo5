@@ -26,8 +26,10 @@ case object PelearContraMonstruo extends Tarea {
 }
 
 case object ForzarPuerta extends Tarea {
+ 
   def facilidadPara(heroe: Heroe, equipo: Equipo): Try[Double] = {
-    Success(heroe.inteligenciaFinal + 10 * equipo.heroes.filter(h => h.job.get eq Ladron).size)
+    val incremento = equipo.miembrosConTrabajo.filter(h => h.job.get eq Ladron).size
+    Success(heroe.inteligenciaFinal + 10 * incremento)
   }
   override def HP(heroe: Heroe) = - 5
   override def fuerza(heroe: Heroe) = 1 

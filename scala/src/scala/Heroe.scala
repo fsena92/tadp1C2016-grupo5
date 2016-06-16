@@ -50,5 +50,6 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
   
   def realizarTarea(tarea: Tarea) = copy(tareasRealizadas = tarea :: tareasRealizadas)
     
+  def stats = println("HP " + HPFinal, "Fuerza " + fuerzaFinal, "velocidodad " + velocidadFinal, "intel " + inteligenciaFinal) 
 
 }

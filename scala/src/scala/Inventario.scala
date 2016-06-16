@@ -1,6 +1,6 @@
 package scala
 
-case class Inventario(var items: List[Item] = Nil) {
+case class Inventario(val items: List[Item] = Nil) {
    
   def equipar(heroe: Heroe, item: Item) = {
     if(item.cumpleCondicion(heroe)) {
