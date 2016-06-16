@@ -33,13 +33,15 @@ case object ForzarPuerta extends Tarea {
   override def fuerza(heroe: Heroe) = 1 
 }
 
+case object ErrorRoboTalisman extends Exception
+
 case class RobarTalisman(val talisman: Talisman) extends Tarea {
   def facilidadPara(heroe: Heroe, equipo: Equipo): Try[Double] = {
     if(equipo.lider.isDefined)
      equipo.lider.get.job.get match {
       case Ladron => Success(heroe.velocidadFinal)
-      case _ => Failure(throw new RuntimeException)
+      case _ => Failure(ErrorRoboTalisman)
     }
-    else Failure(throw new RuntimeException)
+    else Failure(ErrorRoboTalisman)
   }
 }
