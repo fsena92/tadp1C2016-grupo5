@@ -4,7 +4,7 @@ import scala.util.{Try, Success, Failure}
 
 
 case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: Double = 0, 
-             val misiones: List[Mision] = Nil) {
+             val tareaFallida: Option[Tarea] = None) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
 
@@ -62,18 +62,14 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
     case EncontrarNuevoMiembro(nuevoMiembro) => agregarMiembro(nuevoMiembro)
   }
   
-  def realizarMision(mision: Mision): Option[Tarea] = {
+  def realizarMision(mision: Mision): Equipo = {
     val equipoActual = heroes
     val tareasRealizadas = mision.tareas.takeWhile(t => unMiembroRealizaTareaSiPuede(t).isDefined)
     val tareasFallidas = mision.tareas.filterNot(t => tareasRealizadas.contains(t))
-    if (mision.tareas.size == tareasRealizadas.size) {
+    if (mision.tareas.size == tareasRealizadas.size) 
       cobrarRecompensa(mision)
-      None
-    }
-    else {
-      copy(heroes = equipoActual)
-      Some(tareasFallidas.head)
-    }
+    else 
+      copy(heroes = equipoActual, tareaFallida = Some(tareasFallidas.head))
   }
   
   
