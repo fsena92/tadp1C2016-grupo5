@@ -55,11 +55,12 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
   }
     
   def cobrarRecompensa(mision: Mision):Equipo = mision.recompensa match {
-    case GanarOroParaElPozoComun(cantidadOro) => copy(pozoComun = pozoComun + cantidadOro)
-    case EncontrarUnItem(item) => obtenerItem(item)
+    case GanarOroParaElPozoComun(cantidadOro) => copy(pozoComun = pozoComun + cantidadOro, tareaFallida = None)
+    case EncontrarUnItem(item) => copy(tareaFallida = None).obtenerItem(item)
     case IncrementarStats(condicion, recompensaDeStats) => 
-      copy(heroes = heroes.filter(h => condicion(h)).map(h => h.agregarRecompensaStats(recompensaDeStats)))
-    case EncontrarNuevoMiembro(nuevoMiembro) => agregarMiembro(nuevoMiembro)
+      copy(tareaFallida = None, 
+          heroes = heroes.filter(h => condicion(h)).map(h => h.agregarRecompensaStats(recompensaDeStats)))
+    case EncontrarNuevoMiembro(nuevoMiembro) => copy(tareaFallida = None).agregarMiembro(nuevoMiembro)
   }
   
   def realizarMision(mision: Mision): Equipo = {
