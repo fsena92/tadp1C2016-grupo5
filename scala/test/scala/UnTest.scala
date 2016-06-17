@@ -218,50 +218,49 @@ class UnTest  {
   @Test
   def heroeTieneFacilidadDePelearContraMonstruo {
     val unEquipo = new Equipo("equipo", List(spiderman, wolverine))
-    assertEquals(PelearContraMonstruo.facilidadPara(spiderman, unEquipo).get, 10, 0.01)
+    assertEquals(PelearContraMonstruo.facilidadPara(unEquipo).get(spiderman), 10, 0.01)
   }
   
   @Test
   def heroeTieneFacilidadDePelearContraMonstruoYEsLiderGuerrero {
     val unEquipo = new Equipo("equipo", List(spiderman, wolverine.asignarTrabajo(Guerrero)))
-    assertEquals(PelearContraMonstruo.facilidadPara(wolverine.asignarTrabajo(Guerrero), unEquipo).get, 20, 0.01)
+    assertEquals(PelearContraMonstruo.facilidadPara(unEquipo).get(wolverine.asignarTrabajo(Guerrero)), 20, 0.01)
   }
   
   @Test
   def heroeQueNoEsElLiderPeleaContraMonstruo {
     val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Ladron), wolverine.asignarTrabajo(Mago)))
-    assertEquals(PelearContraMonstruo.facilidadPara(wolverine.asignarTrabajo(Mago), unEquipo).get, 10, 0.01)
+    assertEquals(PelearContraMonstruo.facilidadPara(unEquipo).get(wolverine.asignarTrabajo(Mago)), 10, 0.01)
   }
   
   @Test
   def heroeFuerzaPuertaEquipoHayUnLadron {
     val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Ladron), wolverine.asignarTrabajo(Mago)))
-    assertEquals(ForzarPuerta.facilidadPara(spiderman.asignarTrabajo(Ladron), unEquipo).get, 50, 0.01)
+    assertEquals(ForzarPuerta.facilidadPara(unEquipo).get(spiderman.asignarTrabajo(Ladron)), 50, 0.01)
   }
   
   @Test
   def heroeFuerzaPuertaEquipoSinLadron {
     val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Guerrero), wolverine.asignarTrabajo(Mago)))
-    assertEquals(ForzarPuerta.facilidadPara(spiderman.asignarTrabajo(Ladron), unEquipo).get, 40, 0.01)
+    assertEquals(ForzarPuerta.facilidadPara(unEquipo).get(spiderman.asignarTrabajo(Ladron)), 40, 0.01)
   }
   
   @Test
   def facilidadDeHeroeQueRobaTalismanSiEquipoSiTieneLiderDefinido {
     val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Ladron), wolverine.asignarTrabajo(Mago)))
-    assertEquals(RobarTalisman(Maldito).facilidadPara(spiderman.asignarTrabajo(Ladron), unEquipo).get, 70, 0.01)
+    assertEquals(RobarTalisman(Maldito).facilidadPara(unEquipo).get(spiderman.asignarTrabajo(Ladron)), 70, 0.01)
   }
   
   @Test
   def facilidadDeHereoQueRobaTalismanSiEquipoTieneLiderQueNoEsLadron {
     val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Mago), wolverine.asignarTrabajo(Mago)))
-    assertEquals(RobarTalisman(Maldito).facilidadPara(spiderman.asignarTrabajo(Ladron), unEquipo),
-        Failure(ErrorRoboTalisman))
+    assertEquals(RobarTalisman(Maldito).facilidadPara(unEquipo), None)
   }
   
   @Test
   def facilidadDeHeroeQueRobaTalismanSiEquipoNoTieneLiderDefinido {
     val unEquipo = new Equipo("equipo", List(spiderman, wolverine))
-    assertEquals(RobarTalisman(Maldito).facilidadPara(spiderman, unEquipo), Failure(ErrorRoboTalisman))
+    assertEquals(RobarTalisman(Maldito).facilidadPara(unEquipo), None)
   }
   
   @Test

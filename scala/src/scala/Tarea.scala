@@ -3,18 +3,18 @@ package scala
 import scala.util.{Try, Success, Failure}
 
 trait Tarea {
-  def facilidadPara(heroe: Heroe, equipo: Equipo): Try[Double]
+  def facilidadPara(equipo: Equipo): Option[Heroe => Double]
   def afectar(heroe: Heroe): Heroe = heroe
 }
 
 case object PelearContraMonstruo extends Tarea {
-  def facilidadPara(heroe: Heroe, equipo: Equipo): Try[Double] = {
+  def facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
     if(equipo.lider.isDefined)
       equipo.lider.get.job match {
-        case Guerrero => Success(20)
-        case _ => Success(10)
+        case Guerrero => Some(h => 20)
+        case _ => Some(h => 10)
     }
-    else Success(10)
+    else Some(h => 10)
   }
   override def afectar(heroe: Heroe) = {
     if(heroe.fuerzaFinal < 20) heroe.modificarStats(-10, 0, 0, 0)
@@ -24,22 +24,20 @@ case object PelearContraMonstruo extends Tarea {
 }
 
 case object ForzarPuerta extends Tarea {
-  def facilidadPara(heroe: Heroe, equipo: Equipo): Try[Double] = {
+  def  facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
     val incremento = equipo.miembrosConTrabajo.filter(h => h.job eq Ladron).size
-    Success(heroe.inteligenciaFinal + 10 * incremento)
+    Some(h => h.inteligenciaFinal + 10 * incremento)
   }
   override def afectar(heroe: Heroe) = heroe.modificarStats(-5, 1, 0, 0)
 }
 
-case object ErrorRoboTalisman extends Exception
-
 case class RobarTalisman(val talisman: Talisman) extends Tarea {
-  def facilidadPara(heroe: Heroe, equipo: Equipo): Try[Double] = {
+   def facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
     if(equipo.lider.isDefined)
      equipo.lider.get.job match {
-      case Ladron => Success(heroe.velocidadFinal)
-      case _ => Failure(ErrorRoboTalisman)
+      case Ladron => Some(h => h.velocidadFinal)
+      case _ => None
     }
-    else Failure(ErrorRoboTalisman)
+    else None
   }
 }

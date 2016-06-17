@@ -41,9 +41,9 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
   def equiparATodos(item: Item) = copy(heroes = heroes.map(h => h.equipar(item)))
   
   def unMiembroRealizaTareaSiPuede(tarea: Tarea): Option[Heroe] = {
-    mejorHeroeSegun(h => tarea.facilidadPara(h, this) match {
-      case Success(_) => tarea.facilidadPara(h, this).get
-      case Failure(_) => 0
+    mejorHeroeSegun(h => tarea.facilidadPara(this) match {
+      case Some(facilidad) => facilidad(h)
+      case None => 0
     }) match {
       case None => None
       case Some(heroe) => 
