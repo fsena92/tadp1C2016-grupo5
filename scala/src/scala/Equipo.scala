@@ -8,13 +8,13 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
 
-  def miembrosConTrabajo = heroes.filter(h => h.job.isDefined)
+  def miembrosConTrabajo = heroes.filter(h => h.job != Desempleado)
   
   def reemplazarMiembro(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(h => h equals viejo))
   
   def lider: Option[Heroe] = {    
     mejorHeroeSegun(heroe => heroe.job match {
-      case None => 0
+      case Desempleado => 0
       case _ => heroe.statPrincipal
     })
   }
@@ -30,7 +30,7 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
   
   def obtenerItem(item: Item): Equipo = {
     val maximoHeroe = mejorHeroeSegun(heroe => {
-      if(heroe.job.isDefined)
+      if(heroe.job != Desempleado)
         heroe.equipar(item).statPrincipal - heroe.statPrincipal
       else 0
     })  

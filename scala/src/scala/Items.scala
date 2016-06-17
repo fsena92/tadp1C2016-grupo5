@@ -29,7 +29,7 @@ object EspadaDeLaVida extends ArmaSimple {
 object EscudoAntiRobo extends ArmaSimple {
   override val valor: Double = 30
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
-    case Some(Ladron) => false
+    case Ladron => false
     case _ => heroe.fuerzaBase >= 20
   }
   override def HP(heroe: Heroe, valor: Double) = {
@@ -41,8 +41,8 @@ object EscudoAntiRobo extends ArmaSimple {
 object PalitoMagico extends ArmaSimple {
   override val valor: Double = 25
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
-    case Some(Mago) => true
-    case Some(Ladron) => heroe.inteligenciaBase > 30
+    case Mago => true
+    case Ladron => heroe.inteligenciaBase > 30
     case _ => false
   }
   override def inteligencia(heroe: Heroe, valor: Double) = {
@@ -64,7 +64,7 @@ object CascoVikingo extends Cabeza {
 
 object VinchaDelBufaloDelAgua extends Cabeza {
   override val valor: Double = 50
-  override def cumpleCondicion(heroe: Heroe) = heroe.job.isDefined
+  override def cumpleCondicion(heroe: Heroe) = heroe.job != Desempleado
   override def inteligencia(heroe: Heroe, valor: Double) = {
     if(heroe.fuerzaBase > heroe.inteligenciaBase) valor + 30
     else valor
@@ -85,10 +85,7 @@ object VinchaDelBufaloDelAgua extends Cabeza {
 
 object Dedicacion extends Talisman {
   override val valor: Double = 40
-  def porcentaje(heroe: Heroe): Double = heroe.job match {
-    case Some(_) => heroe.desequipar(this).statPrincipal * 0.1
-    case _ => 0
-  }
+  def porcentaje(heroe: Heroe): Double = heroe.desequipar(this).statPrincipal * 0.1
   override def HP(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
   override def fuerza(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
   override def velocidad(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)

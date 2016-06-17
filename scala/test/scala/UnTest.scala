@@ -31,7 +31,7 @@ class UnTest  {
   
   @Test
   def heroeSeConvierteEnGuerrero {
-     assertEquals(Some(Guerrero) ,capitanAmerica.asignarTrabajo(Guerrero).job)    
+     assertEquals(Guerrero ,capitanAmerica.asignarTrabajo(Guerrero).job)    
   }
   
   @Test
@@ -163,7 +163,7 @@ class UnTest  {
   
   @Test 
   def HeroeCambiaDeTrabajo {
-    assertEquals(capitanAmerica.asignarTrabajo(Mago).asignarTrabajo(Guerrero).job.get, Guerrero) 
+    assertEquals(capitanAmerica.asignarTrabajo(Mago).asignarTrabajo(Guerrero).job, Guerrero) 
   }
   
   @Test
