@@ -288,9 +288,7 @@ class UnTest  {
   def EquipoForzarPuertaYModificaStatsDelHeroe {
     assertEquals(otroEquipo.unMiembroRealizaTareaSiPuede(ForzarPuerta).get.HPFinal, 25, 0.01)
   }
-  
-  
-  
+
   
 
   

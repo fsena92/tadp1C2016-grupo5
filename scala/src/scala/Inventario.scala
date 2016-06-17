@@ -35,20 +35,12 @@ case class Inventario(val items: List[Item] = Nil) {
     else copy(item :: items.filterNot(x => x.isInstanceOf[ArmaDoble]))
   }
   
-  def fuerzaFinal(heroe: Heroe, parametro: Double) = {
-    items.foldLeft(parametro)((param, item) => item.fuerza(heroe, param))
-  } 
+  def fuerzaFinal(heroe: Heroe, valor: Double) = items.foldLeft(valor)((v, item) => item.fuerza(heroe, v))
   
-  def HPFinal(heroe: Heroe, parametro: Double) = {
-    items.foldLeft(parametro)((param, item) => item.HP(heroe, param))
-  }
+  def HPFinal(heroe: Heroe, valor: Double) = items.foldLeft(valor)((v, item) => item.HP(heroe, v))
   
-  def velocidadFinal(heroe: Heroe, parametro: Double) = {
-    items.foldLeft(parametro)((param, item) => item.velocidad(heroe, param))
-  }
+  def velocidadFinal(heroe: Heroe, valor: Double) = items.foldLeft(valor)((v, item) => item.velocidad(heroe, v))
   
-  def inteligenciaFinal(heroe: Heroe, parametro: Double) = {
-    items.foldLeft(parametro)((param, item) => item.inteligencia(heroe, param))
-  }
+  def inteligenciaFinal(heroe: Heroe, valor: Double) = items.foldLeft(valor)((v, item) => item.inteligencia(heroe, v))
   
 }

@@ -10,9 +10,7 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
 
   def miembrosConTrabajo = heroes.filter(h => h.job.isDefined)
   
-  def reemplazarMiembro(unMiembro: Heroe, nuevoMiembro: Heroe):Equipo =  {
-    copy(heroes = nuevoMiembro :: heroes.filterNot(h => h equals unMiembro))
-  }
+  def reemplazarMiembro(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(h => h equals viejo))
   
   def lider: Option[Heroe] = {    
     mejorHeroeSegun(heroe => heroe.job match {
@@ -54,7 +52,7 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
     }
   }
     
-  def cobrarRecompensa(mision: Mision):Equipo = mision.recompensa match {
+  def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa match {
     case GanarOroParaElPozoComun(cantidadOro) => copy(pozoComun = pozoComun + cantidadOro, tareaFallida = None)
     case EncontrarUnItem(item) => copy(tareaFallida = None).obtenerItem(item)
     case IncrementarStats(condicion, recompensaDeStats) => 

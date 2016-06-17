@@ -2,7 +2,7 @@ package scala
 
 case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: Double,
                  val inteligenciaBase: Double, val job: Option[Trabajo] = None,
-                 val inventario: Inventario = new Inventario, val tareasRealizadas: List[Tarea] = Nil,
+                 val inventario: Inventario = new Inventario, val tareas: List[Tarea] = Nil,
                  val recompensas: List[StatsRecompensa] = Nil) {
     
   def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo))
@@ -10,35 +10,30 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
   def equipar(item: Item) = copy(inventario = inventario.equipar(this, item))
   
   def cantidadItems = inventario.cantidadItems
-    
-  def fuerzaFinal = {
-    val incRecompensa = recompensas.foldLeft(0:Double)((c, recompensa) => c + recompensa.fuerza)
-    val incTarea = tareasRealizadas.foldLeft(0: Double)((c, tarea) => c + tarea.fuerza(this))
-    if(job.isDefined) positivos(inventario.fuerzaFinal(this, job.get.fuerza(fuerzaBase + incTarea + incRecompensa)))
-    else positivos(inventario.fuerzaFinal(this, fuerzaBase + incTarea + incRecompensa))
-  }
-   
-  def HPFinal = {
-    val incRecompensa = recompensas.foldLeft(0:Double)((c, recompensa) => c + recompensa.HP)
-    val incTarea = tareasRealizadas.foldLeft(0: Double)((c, tarea) => c + tarea.HP(this))
-    if(job.isDefined) positivos(inventario.HPFinal(this, job.get.HP(HPBase + incTarea + incRecompensa)))
-    else positivos(inventario.HPFinal(this, HPBase + incTarea + incRecompensa))
-  }
-   
-  def velocidadFinal = {
-    val incRecompensa = recompensas.foldLeft(0:Double)((c, recompensa) => c + recompensa.velocidad)
-    val incTarea = tareasRealizadas.foldLeft(0: Double)((c, tarea) => c + tarea.velocidad(this))
-    if(job.isDefined) positivos(inventario.velocidadFinal(this, job.get.velocidad(velocidadBase + incTarea + incRecompensa)))
-    else positivos(inventario.velocidadFinal(this, velocidadBase + incTarea + incRecompensa))
-  }
-    
-  def inteligenciaFinal = {
-    val incRecompensa = recompensas.foldLeft(0:Double)((c, recompensa) => c + recompensa.inteligencia)
-    val incTarea = tareasRealizadas.foldLeft(0: Double)((c, tarea) => c + tarea.inteligencia(this))
-    if(job.isDefined) positivos(inventario.inteligenciaFinal(this, job.get.inteligencia(inteligenciaBase + incTarea + incRecompensa)))
-    else positivos(inventario.inteligenciaFinal(this, inteligenciaBase + incTarea + incRecompensa))
+  
+  def statIntermedio(tipo: String, valor: Double) = {
+    if(job isDefined) tipo match {
+      case "h" => job.get.HP(valor) + recompensas.map(r => r.HP).sum + tareas.map(t => t.HP(this)).sum
+      case "f" => job.get.fuerza(valor) + recompensas.map(r => r.fuerza).sum + tareas.map(t => t.fuerza(this)).sum
+      case "v" => job.get.velocidad(valor) + recompensas.map(r => r.velocidad).sum + tareas.map(t => t.velocidad(this)).sum
+      case "i" => job.get.inteligencia(valor) + recompensas.map(r => r.inteligencia).sum + tareas.map(t => t.inteligencia(this)).sum  
+    }
+    else tipo match {
+      case "h" => valor + recompensas.map(r => r.HP).sum + tareas.map(t => t.HP(this)).sum
+      case "f" => valor + recompensas.map(r => r.fuerza).sum + tareas.map(t => t.fuerza(this)).sum
+      case "v" => valor + recompensas.map(r => r.velocidad).sum + tareas.map(t => t.velocidad(this)).sum
+      case "i" => valor + recompensas.map(r => r.inteligencia).sum + tareas.map(t => t.inteligencia(this)).sum    
+    }
   }
   
+  def fuerzaFinal = positivos(inventario.fuerzaFinal(this, statIntermedio("f", fuerzaBase)))
+
+  def HPFinal = positivos(inventario.HPFinal(this, statIntermedio("h", HPBase)))
+
+  def velocidadFinal = positivos(inventario.velocidadFinal(this, statIntermedio("v", velocidadBase)))
+    
+  def inteligenciaFinal = positivos(inventario.inteligenciaFinal(this, statIntermedio("i", inteligenciaBase)))
+ 
   def positivos(valorStat: Double) = {
     if(valorStat < 1) 1
     else valorStat
@@ -53,10 +48,8 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
     case "Velocidad" => velocidadFinal
   }
   
-  def realizarTarea(tarea: Tarea) = copy(tareasRealizadas = tarea :: tareasRealizadas)
+  def realizarTarea(unaTarea: Tarea) = copy(tareas = unaTarea :: tareas)
   
-  def agregarRecompensaStats(recompensa: StatsRecompensa) = copy(recompensas = recompensa :: recompensas)
+  def agregarRecompensaStats(unaRecompensa: StatsRecompensa) = copy(recompensas = unaRecompensa :: recompensas)
   
-  def stats = println("HP " + HPFinal, "Fuerza " + fuerzaFinal, "velocidodad " + velocidadFinal, "intel " + inteligenciaFinal) 
-
 }
