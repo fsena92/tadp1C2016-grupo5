@@ -11,16 +11,20 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
   
   def lider: Option[Heroe] = {    
     mejorHeroeSegun(heroe => heroe.job match {
-      case Some(Desempleado) => 0
+      case None => 0
       case _ => heroe.statPrincipal
     })
   }
  
   def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
-    val maximo = miembrosConTrabajo.map(h => cuantificador(h)).max
-    val heroe = heroes.filter(h => cuantificador(h) == maximo)
-    if (heroe.size == 0) None
-    else Some(heroe.head) 
+    val cumplenCondicion = miembrosConTrabajo.map(h => cuantificador(h))
+    if(cumplenCondicion.size > 0) {
+      val maximo = cumplenCondicion.max
+      val heroe = heroes.filter(h => cuantificador(h) == maximo)
+      if (heroe.size == 0) None
+      else Some(heroe.head) 
+    }
+    else None
   }
   
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
@@ -31,7 +35,7 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
  
   def obtenerItem(item: Item): Equipo = {
     val maximoHeroe = mejorHeroeSegun(heroe => {
-      if(heroe.job != Desempleado)
+      if(heroe.job.isDefined)
         heroe.equipar(item).statPrincipal - heroe.statPrincipal
       else 0
     })  

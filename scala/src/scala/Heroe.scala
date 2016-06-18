@@ -2,7 +2,7 @@ package scala
 
 
 case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: Double, val inteligenciaBase: Double,
-                 val job: Option[Trabajo] = Some(Desempleado), val inventario: Inventario = new Inventario) { 
+                 val job: Option[Trabajo] = None, val inventario: Inventario = new Inventario) { 
     
   
   def velocidadTrabajo(base: Double) = job.foldLeft(base)((b, elJob) => elJob.velocidad(b))

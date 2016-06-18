@@ -64,7 +64,7 @@ object CascoVikingo extends Cabeza {
 
 object VinchaDelBufaloDelAgua extends Cabeza {
   override val precio: Double = 50
-  override def cumpleCondicion(heroe: Heroe) = heroe.job != Desempleado
+  override def cumpleCondicion(heroe: Heroe) = heroe.job.isDefined
   override def inteligencia(heroe: Heroe, valor: Double) = {
     if(heroe.fuerzaBase > heroe.inteligenciaBase) valor + 30
     else valor

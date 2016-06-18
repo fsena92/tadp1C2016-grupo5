@@ -14,6 +14,7 @@ class UnTest  {
    var kratos: Heroe = null
    var equipo: Equipo = null
    var otroEquipo: Equipo = null
+   var equipito: Equipo = null
    
   @Before
   def setup = {
@@ -23,6 +24,7 @@ class UnTest  {
     capitanAmerica = new Heroe(70, 30, 60, 20)
     wolverine = new Heroe(1000, 60, 50, 20)
     equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
+    equipito = new Equipo("", List(spiderman.asignarTrabajo(Guerrero), ironMan.asignarTrabajo(Mago)))
     otroEquipo = new Equipo("otro", List(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo),
         wolverine.asignarTrabajo(Ladron).equipar(EspadaDeLaVida), capitanAmerica.asignarTrabajo(Guerrero).equipar(CascoVikingo),
         kratos.equipar(VinchaDelBufaloDelAgua).equipar(ArcoViejo)))        
@@ -167,7 +169,7 @@ class UnTest  {
   
   @Test
   def MejorHeroeSegun {
-    assertEquals(equipo.mejorHeroeSegun { heroe => heroe.HPBase }.get, ironMan)
+    assertEquals(equipito.mejorHeroeSegun(_.HPBase).get, ironMan.asignarTrabajo(Mago))
   }
   
   @Test
@@ -183,7 +185,7 @@ class UnTest  {
   
   @Test
   def EquipoNoTieneLiderDefinido {
-    assertEquals(equipo.lider, Some(spiderman))
+    assertEquals(equipo.lider, None)
   }
   
   @Test

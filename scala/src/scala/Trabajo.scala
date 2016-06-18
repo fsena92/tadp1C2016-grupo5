@@ -10,7 +10,6 @@ abstract class Trabajo(val HP: Double = 0, val fuerza: Double,
   
 }
 
-case object Desempleado extends Trabajo(0, 0, 0, 0, h => 0)
 case object Guerrero extends Trabajo(10, 15, 0, -10, _.fuerzaFinal)
 case object Mago extends Trabajo(0, 20, 0, 20, _.inteligenciaFinal)
 case object Ladron extends Trabajo (-5, 0, 10, 0, _.velocidadFinal)
