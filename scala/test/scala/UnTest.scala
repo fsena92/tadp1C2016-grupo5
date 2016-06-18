@@ -3,7 +3,6 @@ package scala
 import org.junit.Test
 import org.junit.Assert._
 import org.junit.Before
-import scala.util.{Try, Success, Failure}
 
 
 class UnTest  {
