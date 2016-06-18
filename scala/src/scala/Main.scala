@@ -19,8 +19,10 @@ object Main {
     wolverine.asignarTrabajo(Ladron).equipar(EspadaDeLaVida), capitanAmerica.asignarTrabajo(Guerrero).equipar(CascoVikingo),
     kratos.equipar(VinchaDelBufaloDelAgua).equipar(ArcoViejo)))    
     
-    println(otroEquipo.lider)
-    println(otroEquipo.unMiembroRealizaTareaSiPuede(PelearContraMonstruo))
+   
+    var tupla = (12, 2423)
+    println(tupla._1)
+    println(tupla._2)
    
     
     

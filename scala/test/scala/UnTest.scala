@@ -270,24 +270,25 @@ class UnTest  {
   
   @Test
   def EquipoNoPuedeRealizarTareaSuLiderNoEsLadri {
-    assertEquals(otroEquipo.unMiembroRealizaTareaSiPuede(RobarTalisman(Maldito)), None)
+    assertEquals(otroEquipo.elMejorPuedeRealizar(RobarTalisman(Maldito)), None)
   }
   
   @Test
   def EquipoNoPuedePelearContraMonstruoNoHayCandidatoMejorSegun {
-    assertEquals(otroEquipo.unMiembroRealizaTareaSiPuede(PelearContraMonstruo), None)
+    assertEquals(otroEquipo.elMejorPuedeRealizar(PelearContraMonstruo), None)
   }
   
   @Test
   def EquipoPuedeRealizarLaTareaDeForzarPuerta {
-    assertTrue(otroEquipo.unMiembroRealizaTareaSiPuede(ForzarPuerta).isDefined)
+    assertTrue(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).isDefined)
   }
   
   @Test
   def EquipoForzarPuertaYModificaStatsDelHeroe {
-    assertEquals(otroEquipo.unMiembroRealizaTareaSiPuede(ForzarPuerta).get.HPFinal, 25, 0.01)
+    assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 25, 0.01)
   }
-
+  
+  
   
 
   

@@ -13,10 +13,15 @@ class Taberna(var misiones: Set[Mision]) {
   
   def entrenar(unEquipo: Equipo, unCriterio: (Equipo, Equipo) => Boolean) = {
     var equipoIntermedio = unEquipo
+    var equipoAnterior = unEquipo
+    
     while(misiones.size > 0) {
       equipoIntermedio = unEquipo.realizarMision(elegirMision(unCriterio, unEquipo))
-      if(equipoIntermedio.tareaFallida.isDefined) break
-      else misiones = misiones.filterNot(m => m eq elegirMision(unCriterio, unEquipo))
+      if(equipoIntermedio eq equipoAnterior) break
+      else {
+        misiones = misiones.filterNot(m => m eq elegirMision(unCriterio, unEquipo))
+        equipoAnterior = equipoIntermedio
+      }
     }
     equipoIntermedio
   }

@@ -1,10 +1,7 @@
 package scala
 
-import scala.util.{Try, Success, Failure}
 
-
-case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: Double = 0, 
-             val tareaFallida: Option[Tarea] = None) {
+case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
 
@@ -40,35 +37,35 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
   
   def equiparATodos(item: Item) = copy(heroes = heroes.map(h => h.equipar(item)))
   
-  def unMiembroRealizaTareaSiPuede(tarea: Tarea): Option[Heroe] = {
+  def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
     mejorHeroeSegun(h => tarea.facilidadPara(this) match {
       case Some(facilidad) => facilidad(h)
       case None => 0
-    }) match {
-      case None => None
-      case Some(heroe) => 
-        reemplazarMiembro(heroe, heroe.realizarTarea(tarea))
-        Some(heroe.realizarTarea(tarea))
-    }
+    }) 
   }
     
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa match {
-    case GanarOroParaElPozoComun(cantidadOro) => copy(pozoComun = pozoComun + cantidadOro, tareaFallida = None)
-    case EncontrarUnItem(item) => copy(tareaFallida = None).obtenerItem(item)
+    case GanarOroParaElPozoComun(cantidadOro) => copy(pozoComun = pozoComun + cantidadOro)
+    case EncontrarUnItem(item) => obtenerItem(item)
     case IncrementarStats(condicion, recompensaDeStats) => 
-      copy(tareaFallida = None, 
-          heroes = heroes.filter(h => condicion(h)).map(h => h.agregarRecompensaStats(recompensaDeStats)))
-    case EncontrarNuevoMiembro(nuevoMiembro) => copy(tareaFallida = None).agregarMiembro(nuevoMiembro)
+      copy(heroes = heroes.filter(h => condicion(h)).map(h => h.agregarRecompensaStats(recompensaDeStats)))
+    case EncontrarNuevoMiembro(nuevoMiembro) => agregarMiembro(nuevoMiembro)
   }
   
   def realizarMision(mision: Mision): Equipo = {
-    val equipoActual = heroes
-    val tareasRealizadas = mision.tareas.takeWhile(t => unMiembroRealizaTareaSiPuede(t).isDefined)
-    val tareasFallidas = mision.tareas.filterNot(t => tareasRealizadas.contains(t))
-    if (mision.tareas.size == tareasRealizadas.size) 
-      cobrarRecompensa(mision)
-    else 
-      copy(heroes = equipoActual, tareaFallida = Some(tareasFallidas.head))
+    var flag = true
+    val equipoConMision = mision.tareas.foldLeft(this)((equipo, t) => {
+      if(flag) {
+        if (equipo.elMejorPuedeRealizar(t).isDefined)
+          reemplazarMiembro(equipo.elMejorPuedeRealizar(t).get, equipo.elMejorPuedeRealizar(t).get.realizarTarea(t))
+        else
+          flag = false
+          this
+      }
+      else this
+    })
+    if(equipoConMision != this) equipoConMision.cobrarRecompensa(mision)
+    else this    
   }
   
   
