@@ -1,7 +1,5 @@
 package scala
 
-import scala.util.{Try, Success, Failure}
-
 trait Tarea {
   def facilidadPara(equipo: Equipo): Option[Heroe => Double]
   def afectar(heroe: Heroe): Heroe = heroe
