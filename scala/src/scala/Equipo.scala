@@ -23,8 +23,12 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
     else Some(heroe.head)
   }
   
-  def incrementarPozo(item: Item) = copy(pozoComun = pozoComun + item.precio) 
+  def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
+  def incrementarStatsDeLosMiembros(miembros: List[Heroe], recompensa: StatsRecompensa) = {
+    copy(heroes = heroes.map(_.agregarRecompensaStats(recompensa)))
+  }
+ 
   def obtenerItem(item: Item): Equipo = {
     val maximoHeroe = mejorHeroeSegun(heroe => {
       if(heroe.job != Desempleado)
@@ -32,7 +36,7 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
       else 0
     })  
     if(maximoHeroe.isDefined) reemplazarMiembro(maximoHeroe.get, maximoHeroe.get.equipar(item))
-    else incrementarPozo(item)
+    else incrementarPozo(item.precio)
   }
   
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))
@@ -43,14 +47,8 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
       case None => 0
     }) 
   }
-    
-  def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa match {
-    case GanarOroParaElPozoComun(cantidadOro) => copy(pozoComun = pozoComun + cantidadOro)
-    case EncontrarUnItem(item) => obtenerItem(item)
-    case IncrementarStats(condicion, recompensaDeStats) => 
-      copy(heroes = heroes.filter(h => condicion(h)).map(_.agregarRecompensaStats(recompensaDeStats)))
-    case EncontrarNuevoMiembro(nuevoMiembro) => agregarMiembro(nuevoMiembro)
-  }
+  
+  def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
   def realizarMision(mision: Mision): Equipo = {
     var flag = true

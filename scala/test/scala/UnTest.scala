@@ -194,7 +194,7 @@ class UnTest  {
   
   @Test
   def incrementarElPozoComunDelEquipo {
-    assertEquals(equipo.incrementarPozo(CascoVikingo).pozoComun, 5, 0.01)
+    assertEquals(equipo.incrementarPozo(CascoVikingo.precio).pozoComun, 5, 0.01)
   }
   //TODO: probar obtenerItem
   
