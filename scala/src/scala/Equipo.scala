@@ -5,9 +5,9 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
 
-  def miembrosConTrabajo = heroes.filter(h => h.job != Desempleado)
+  def miembrosConTrabajo = heroes.filter(_.job != Desempleado)
   
-  def reemplazarMiembro(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(h => h equals viejo))
+  def reemplazarMiembro(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
   
   def lider: Option[Heroe] = {    
     mejorHeroeSegun(heroe => heroe.job match {
@@ -23,7 +23,7 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
     else Some(heroe.head)
   }
   
-  def incrementarPozo(item: Item) = copy(pozoComun = pozoComun + item.valor) 
+  def incrementarPozo(item: Item) = copy(pozoComun = pozoComun + item.precio) 
   
   def obtenerItem(item: Item): Equipo = {
     val maximoHeroe = mejorHeroeSegun(heroe => {
@@ -35,7 +35,7 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
     else incrementarPozo(item)
   }
   
-  def equiparATodos(item: Item) = copy(heroes = heroes.map(h => h.equipar(item)))
+  def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))
   
   def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
     mejorHeroeSegun(h => tarea.facilidadPara(this) match {
@@ -48,7 +48,7 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
     case GanarOroParaElPozoComun(cantidadOro) => copy(pozoComun = pozoComun + cantidadOro)
     case EncontrarUnItem(item) => obtenerItem(item)
     case IncrementarStats(condicion, recompensaDeStats) => 
-      copy(heroes = heroes.filter(h => condicion(h)).map(h => h.agregarRecompensaStats(recompensaDeStats)))
+      copy(heroes = heroes.filter(h => condicion(h)).map(_.agregarRecompensaStats(recompensaDeStats)))
     case EncontrarNuevoMiembro(nuevoMiembro) => agregarMiembro(nuevoMiembro)
   }
   

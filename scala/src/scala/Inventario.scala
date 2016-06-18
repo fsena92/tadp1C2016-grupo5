@@ -15,24 +15,24 @@ case class Inventario(val items: List[Item] = Nil) {
     else this
   }
   
-  def desequipar(item: Item) = copy(items.filterNot(i => i eq item))
+  def desequipar(item: Item) = copy(items.filterNot(_ eq item))
   
   def cantidadItems = items.size
   def equiparTalisman(item: Item) = copy(item :: items)
-  def equiparCabeza(item: Item) = copy(item :: items.filterNot(i => i.isInstanceOf[Cabeza]))
-  def equiparArmadura(item: Item) = copy(item :: items.filterNot(i => i.isInstanceOf[Armadura]))
+  def equiparCabeza(item: Item) = copy(item :: items.filterNot(_.isInstanceOf[Cabeza]))
+  def equiparArmadura(item: Item) = copy(item :: items.filterNot(_.isInstanceOf[Armadura]))
   def equiparArmaDoble(item: Item) = {
     copy (item :: items.filterNot(i => i.isInstanceOf[ArmaSimple] || i.isInstanceOf[ArmaDoble]))
   }
 
   def equiparArmaSimple(item: Item) = {
-    val armas = items.filter(i => i.isInstanceOf[ArmaSimple])
-    val armaDoble = items.filter(i => i.isInstanceOf[ArmaDoble])
+    val armas = items.filter(_.isInstanceOf[ArmaSimple])
+    val armaDoble = items.filter(_.isInstanceOf[ArmaDoble])
     if (armaDoble.size < 1) {
       if (armas.size < 2) copy(item :: items)
-      else copy(item :: armas.head :: items.filterNot(i => i.isInstanceOf[ArmaSimple]))
+      else copy(item :: armas.head :: items.filterNot(_.isInstanceOf[ArmaSimple]))
     }
-    else copy(item :: items.filterNot(x => x.isInstanceOf[ArmaDoble]))
+    else copy(item :: items.filterNot(_.isInstanceOf[ArmaDoble]))
   }
   
   def fuerzaFinal(heroe: Heroe, valor: Double) = items.foldLeft(valor)((v, item) => item.fuerza(heroe, v))

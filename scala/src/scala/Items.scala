@@ -1,7 +1,7 @@
 package scala
 
 trait Item {
-  val valor:Double = 0
+  val precio: Double = 0
   def cumpleCondicion(heroe: Heroe): Boolean = true
   def fuerza(heroe: Heroe, valor: Double) = valor
   def HP(heroe: Heroe, valor: Double) = valor
@@ -16,18 +16,18 @@ case class ArmaDoble() extends Item
 case class Armadura() extends Item
 
 object ArmaduraEleganteSport extends Armadura {
-  override val valor: Double = 10
+  override val precio: Double = 10
   override def HP(heroe: Heroe, valor: Double) = valor - 30
   override def velocidad(heroe: Heroe, valor: Double) = valor + 30 
 }
 
 object EspadaDeLaVida extends ArmaSimple {
-  override val valor: Double = 20
+  override val precio: Double = 20
   override def fuerza(heroe: Heroe, valor: Double) = heroe.HPFinal
 }
 
 object EscudoAntiRobo extends ArmaSimple {
-  override val valor: Double = 30
+  override val precio: Double = 30
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Ladron => false
     case _ => heroe.fuerzaBase >= 20
@@ -39,7 +39,7 @@ object EscudoAntiRobo extends ArmaSimple {
 }
 
 object PalitoMagico extends ArmaSimple {
-  override val valor: Double = 25
+  override val precio: Double = 25
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Mago => true
     case Ladron => heroe.inteligenciaBase > 30
@@ -52,18 +52,18 @@ object PalitoMagico extends ArmaSimple {
 }
 
 object ArcoViejo extends ArmaDoble {
-  override val valor: Double = 15
+  override val precio: Double = 15
   override def fuerza(heroe: Heroe, valor: Double) = valor + 2
 }
 
 object CascoVikingo extends Cabeza {
-  override val valor: Double = 5
+  override val precio: Double = 5
   override def cumpleCondicion(heroe: Heroe) = heroe.fuerzaBase > 30
   override def HP(heroe: Heroe, valor: Double) = valor + 10
 }
 
 object VinchaDelBufaloDelAgua extends Cabeza {
-  override val valor: Double = 50
+  override val precio: Double = 50
   override def cumpleCondicion(heroe: Heroe) = heroe.job != Desempleado
   override def inteligencia(heroe: Heroe, valor: Double) = {
     if(heroe.fuerzaBase > heroe.inteligenciaBase) valor + 30
@@ -84,7 +84,7 @@ object VinchaDelBufaloDelAgua extends Cabeza {
 }
 
 object Dedicacion extends Talisman {
-  override val valor: Double = 40
+  override val precio: Double = 40
   def porcentaje(heroe: Heroe): Double = heroe.desequipar(this).statPrincipal * 0.1
   override def HP(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
   override def fuerza(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
@@ -93,12 +93,12 @@ object Dedicacion extends Talisman {
 }
 
 object Minimalismo extends Talisman {
-  override val valor: Double = 5
+  override val precio: Double = 5
   override def HP(heroe: Heroe, valor: Double) = valor + 50 - (heroe.cantidadItems - 1) * 10
 }
 
 object Maldito extends Talisman {  
-  override val valor: Double = 100
+  override val precio: Double = 100
   override def HP(heroe: Heroe, valor: Double) = 1
   override def fuerza(heroe: Heroe, valor: Double) = 1
   override def velocidad(heroe: Heroe, valor: Double) = 1
