@@ -29,7 +29,7 @@ object EspadaDeLaVida extends ArmaSimple {
 object EscudoAntiRobo extends ArmaSimple {
   override val precio: Double = 30
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
-    case Ladron => false
+    case Some(Ladron) => false
     case _ => heroe.fuerzaBase >= 20
   }
   override def HP(heroe: Heroe, valor: Double) = {
@@ -41,8 +41,8 @@ object EscudoAntiRobo extends ArmaSimple {
 object PalitoMagico extends ArmaSimple {
   override val precio: Double = 25
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
-    case Mago => true
-    case Ladron => heroe.inteligenciaBase > 30
+    case Some(Mago) => true
+    case Some(Ladron) => heroe.inteligenciaBase > 30
     case _ => false
   }
   override def inteligencia(heroe: Heroe, valor: Double) = {

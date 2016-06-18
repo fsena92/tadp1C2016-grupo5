@@ -5,22 +5,22 @@ case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoCom
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
 
-  def miembrosConTrabajo = heroes.filter(_.job != Desempleado)
+  def miembrosConTrabajo = heroes.filter(_.job.isDefined)
   
   def reemplazarMiembro(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
   
   def lider: Option[Heroe] = {    
     mejorHeroeSegun(heroe => heroe.job match {
-      case Desempleado => 0
+      case Some(Desempleado) => 0
       case _ => heroe.statPrincipal
     })
   }
  
   def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
-    val maximo = heroes.map(h => cuantificador(h)).max
+    val maximo = miembrosConTrabajo.map(h => cuantificador(h)).max
     val heroe = heroes.filter(h => cuantificador(h) == maximo)
-    if (heroe.size > 1) None
-    else Some(heroe.head)
+    if (heroe.size == 0) None
+    else Some(heroe.head) 
   }
   
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)

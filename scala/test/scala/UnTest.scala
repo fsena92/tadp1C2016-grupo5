@@ -30,7 +30,7 @@ class UnTest  {
   
   @Test
   def heroeSeConvierteEnGuerrero {
-     assertEquals(Guerrero ,capitanAmerica.asignarTrabajo(Guerrero).job)    
+     assertEquals(Some(Guerrero) ,capitanAmerica.asignarTrabajo(Guerrero).job)    
   }
   
   @Test
@@ -162,7 +162,7 @@ class UnTest  {
   
   @Test 
   def HeroeCambiaDeTrabajo {
-    assertEquals(capitanAmerica.asignarTrabajo(Mago).asignarTrabajo(Guerrero).job, Guerrero) 
+    assertEquals(capitanAmerica.asignarTrabajo(Mago).asignarTrabajo(Guerrero).job, Some(Guerrero)) 
   }
   
   @Test
@@ -183,7 +183,7 @@ class UnTest  {
   
   @Test
   def EquipoNoTieneLiderDefinido {
-    assertEquals(equipo.lider, None)
+    assertEquals(equipo.lider, Some(spiderman))
   }
   
   @Test
@@ -269,12 +269,14 @@ class UnTest  {
   
   @Test
   def EquipoNoPuedeRealizarTareaSuLiderNoEsLadri {
-    assertEquals(otroEquipo.elMejorPuedeRealizar(RobarTalisman(Maldito)), None)
+    assertEquals(otroEquipo.elMejorPuedeRealizar(RobarTalisman(Maldito)), 
+        Some(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo)))
   }
   
   @Test
   def EquipoNoPuedePelearContraMonstruoNoHayCandidatoMejorSegun {
-    assertEquals(otroEquipo.elMejorPuedeRealizar(PelearContraMonstruo), None)
+    assertEquals(otroEquipo.elMejorPuedeRealizar(PelearContraMonstruo),
+        Some(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo)))
   }
   
   @Test
