@@ -27,11 +27,7 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   }
  
   def obtenerItem(item: Item): Equipo = {
-    val maximoHeroe = mejorHeroeSegun(heroe => {
-      if(heroe.job.isDefined)
-        heroe.equipar(item).statPrincipal - heroe.statPrincipal
-      else 0
-    })  
+    val maximoHeroe = mejorHeroeSegun(h => h.equipar(item).statPrincipal - h.statPrincipal)  
     if(maximoHeroe.isDefined) reemplazarMiembro(maximoHeroe.get, maximoHeroe.get.equipar(item))
     else incrementarPozo(item.precio)
   }

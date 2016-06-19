@@ -20,7 +20,7 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
   def cantidadItems = inventario.cantidadItems
   def desequipar(item: Item) = copy(inventario = inventario.desequipar(item))
    
-  def statPrincipal: Double = job.foldLeft(0:Double)((base, trabajo) => trabajo.statPrincipal(this))
+  def statPrincipal = job.foldLeft(0:Double)((base, trabajo) => trabajo.statPrincipal(this))
   
   def modificarStats(hp: Double, fuerza: Double, velocidad: Double ,inteligencia: Double) = {
      copy(HPBase = HPBase + hp,

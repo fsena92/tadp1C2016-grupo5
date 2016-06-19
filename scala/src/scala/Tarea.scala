@@ -7,6 +7,16 @@ trait Tarea {
 
 case object PelearContraMonstruo extends Tarea {
   def facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
+   
+    //TODO: se no ocurrio esto, funciona
+//   val asda:Option[Heroe => Double] =   
+//   (for {lider <- equipo.lider; trabajo <- lider.job
+//       if(trabajo == Guerrero)}
+//       yield h => 20)
+//    
+//       asda.foldLeft(Some(h => 10): Option[Heroe => Double])((s, lider) => Some(h => 20))
+    
+    // este tambien funciona
     if(equipo.lider.isDefined)
       equipo.lider.get.job match {
         case Some(Guerrero) => Some(h => 20)
@@ -18,7 +28,6 @@ case object PelearContraMonstruo extends Tarea {
     if(heroe.fuerzaFinal < 20) heroe.modificarStats(-10, 0, 0, 0)
     else heroe
   }
-  
 }
 
 case object ForzarPuerta extends Tarea {
