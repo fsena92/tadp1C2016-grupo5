@@ -2,7 +2,7 @@ package scala
 
 import scala.util.control.Breaks._
 
-class Taberna(var misiones: Set[Mision]) {
+case class Taberna(var misiones: Set[Mision]) {
   
   def elegirMision(criterio: (Equipo, Equipo) => Boolean, unEquipo: Equipo): Mision = {
       misiones.foldLeft(misiones.head){(mision1, mision2) => 
