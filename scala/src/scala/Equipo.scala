@@ -1,7 +1,7 @@
 package scala
 
 
-case class Equipo(val nombre: String, var heroes: List[Heroe] = Nil, var pozoComun: Double = 0) {
+case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
 

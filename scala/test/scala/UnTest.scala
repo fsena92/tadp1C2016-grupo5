@@ -291,15 +291,7 @@ class UnTest  {
     assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 25, 0.01)
   }
   
-  
-  
 
-  
-  
-  
-  
-  
- 
   
 }
 

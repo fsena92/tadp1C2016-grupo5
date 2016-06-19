@@ -29,7 +29,7 @@ case object ForzarPuerta extends Tarea {
   override def afectar(heroe: Heroe) = heroe.modificarStats(-5, 1, 0, 0)
 }
 
-case class RobarTalisman(val talisman: Talisman) extends Tarea {
+case class RobarTalisman(val talisman: Item) extends Tarea {
    def facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
     if(equipo.lider.isDefined)
      equipo.lider.get.job match {

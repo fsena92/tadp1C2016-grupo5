@@ -1,32 +1,31 @@
 package scala
 
-trait Item {
-  val precio: Double = 0
+object Sector extends Enumeration {
+  type Sector = Value
+  val Cabeza, Armadura, ArmaSimple, ArmaDoble, Talisman = Value
+}
+import Sector._
+
+abstract class Item(val sector: Sector, val precio: Double = 0) {
   def cumpleCondicion(heroe: Heroe): Boolean = true
   def fuerza(heroe: Heroe, valor: Double) = valor
   def HP(heroe: Heroe, valor: Double) = valor
   def velocidad(heroe: Heroe, valor: Double) = valor
-  def inteligencia(heroe: Heroe, valor: Double) = valor
+  def inteligencia(heroe: Heroe, valor: Double) = valor  
 }
 
-case class Cabeza() extends Item 
-case class Talisman() extends Item
-case class ArmaSimple() extends Item
-case class ArmaDoble() extends Item
-case class Armadura() extends Item
-
-object ArmaduraEleganteSport extends Armadura {
+object ArmaduraEleganteSport extends Item(Cabeza) {
   override val precio: Double = 10
   override def HP(heroe: Heroe, valor: Double) = valor - 30
   override def velocidad(heroe: Heroe, valor: Double) = valor + 30 
 }
 
-object EspadaDeLaVida extends ArmaSimple {
+object EspadaDeLaVida extends Item(ArmaSimple) {
   override val precio: Double = 20
   override def fuerza(heroe: Heroe, valor: Double) = heroe.HPFinal
 }
 
-object EscudoAntiRobo extends ArmaSimple {
+object EscudoAntiRobo extends Item(ArmaSimple) {
   override val precio: Double = 30
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Some(Ladron) => false
@@ -38,7 +37,7 @@ object EscudoAntiRobo extends ArmaSimple {
   }
 }
 
-object PalitoMagico extends ArmaSimple {
+object PalitoMagico extends Item(ArmaSimple) {
   override val precio: Double = 25
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Some(Mago) => true
@@ -51,18 +50,18 @@ object PalitoMagico extends ArmaSimple {
   }
 }
 
-object ArcoViejo extends ArmaDoble {
+object ArcoViejo extends Item(ArmaDoble) {
   override val precio: Double = 15
   override def fuerza(heroe: Heroe, valor: Double) = valor + 2
 }
 
-object CascoVikingo extends Cabeza {
+object CascoVikingo extends Item(Cabeza) {
   override val precio: Double = 5
   override def cumpleCondicion(heroe: Heroe) = heroe.fuerzaBase > 30
   override def HP(heroe: Heroe, valor: Double) = valor + 10
 }
 
-object VinchaDelBufaloDelAgua extends Cabeza {
+object VinchaDelBufaloDelAgua extends Item(Cabeza) {
   override val precio: Double = 50
   override def cumpleCondicion(heroe: Heroe) = heroe.job.isDefined
   override def inteligencia(heroe: Heroe, valor: Double) = {
@@ -83,7 +82,7 @@ object VinchaDelBufaloDelAgua extends Cabeza {
   }
 }
 
-object Dedicacion extends Talisman {
+object Dedicacion extends Item(Talisman) {
   override val precio: Double = 40
   def porcentaje(heroe: Heroe): Double = heroe.desequipar(this).statPrincipal * 0.1
   override def HP(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
@@ -92,12 +91,12 @@ object Dedicacion extends Talisman {
   override def inteligencia(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
 }
 
-object Minimalismo extends Talisman {
+object Minimalismo extends Item(Talisman) {
   override val precio: Double = 5
   override def HP(heroe: Heroe, valor: Double) = valor + 50 - (heroe.cantidadItems - 1) * 10
 }
 
-object Maldito extends Talisman {  
+object Maldito extends Item(Talisman) {  
   override val precio: Double = 100
   override def HP(heroe: Heroe, valor: Double) = 1
   override def fuerza(heroe: Heroe, valor: Double) = 1

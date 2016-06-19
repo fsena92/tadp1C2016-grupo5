@@ -1,35 +1,23 @@
 package scala
 
-
 case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: Double, val inteligenciaBase: Double,
                  val job: Option[Trabajo] = None, val inventario: Inventario = new Inventario) { 
-    
   
-  def velocidadTrabajo(base: Double) = job.foldLeft(base)((b, elJob) => elJob.velocidad(b))
-  def HPTrabajo(base: Double) = job.foldLeft(base)((b, elJob) => elJob.HP(b))
-  def inteligenciaTrabajo(base: Double) = job.foldLeft(base)((b, elJob) => elJob.inteligencia(b))
-  def fuerzaTrabajo(base: Double) = job.foldLeft(base)((b, elJob) => elJob.fuerza(b))
+  def statTrabajo(base: Double, delta: (Trabajo, Double) => Double) = job.foldLeft(base)((b, j) => delta(j, b))
   
+  def fuerzaFinal = mayorAUno(inventario fuerzaFinal(this, statTrabajo(fuerzaBase, _ fuerza _ )))
+  def HPFinal = mayorAUno(inventario HPFinal(this, statTrabajo(HPBase, _ HP _)))
+  def velocidadFinal = mayorAUno(inventario velocidadFinal(this, statTrabajo(velocidadBase,  _ velocidad _ )))
+  def inteligenciaFinal = mayorAUno(inventario inteligenciaFinal(this, statTrabajo(inteligenciaBase, _ inteligencia _ )))
   
-  def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo))
-    
-  def equipar(item: Item) = copy(inventario = inventario.equipar(this, item))
-  
-  def cantidadItems = inventario.cantidadItems
-  
-  def fuerzaFinal = positivos(inventario.fuerzaFinal(this, fuerzaTrabajo(fuerzaBase)))
-
-  def HPFinal = positivos(inventario.HPFinal(this, HPTrabajo(HPBase)))
-
-  def velocidadFinal = positivos(inventario.velocidadFinal(this, velocidadTrabajo(velocidadBase)))
-    
-  def inteligenciaFinal = positivos(inventario.inteligenciaFinal(this, inteligenciaTrabajo(inteligenciaBase)))
- 
-  def positivos(valorStat: Double) = {
+  def mayorAUno(valorStat: Double) = {
     if(valorStat < 1) 1
     else valorStat
   }
   
+  def equipar(item: Item) = copy(inventario = inventario.equipar(this, item))
+  def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo))
+  def cantidadItems = inventario.cantidadItems
   def desequipar(item: Item) = copy(inventario = inventario.desequipar(item))
    
   def statPrincipal: Double = job.get.statPrincipal(this)
