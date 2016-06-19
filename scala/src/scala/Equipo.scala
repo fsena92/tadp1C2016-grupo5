@@ -1,6 +1,5 @@
 package scala
 
-
 case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
@@ -9,22 +8,16 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   
   def reemplazarMiembro(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
   
-  def lider: Option[Heroe] = {    
-    mejorHeroeSegun(heroe => heroe.job match {
-      case None => 0
-      case _ => heroe.statPrincipal
-    })
+  def lider: Option[Heroe] = {
+    if (heroes.map(h => h.statPrincipal).forall(_.== (0))) None
+    else mejorHeroeSegun(_.statPrincipal)
   }
  
   def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
-    val cumplenCondicion = miembrosConTrabajo.map(h => cuantificador(h))
-    if(cumplenCondicion.size > 0) {
-      val maximo = cumplenCondicion.max
+      val maximo = heroes.map(h => cuantificador(h)).max
       val heroe = heroes.filter(h => cuantificador(h) == maximo)
       if (heroe.size == 0) None
       else Some(heroe.head) 
-    }
-    else None
   }
   
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
