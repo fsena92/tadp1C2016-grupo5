@@ -84,7 +84,7 @@ object VinchaDelBufaloDelAgua extends Item(Cabeza) {
 
 object Dedicacion extends Item(Talisman) {
   override val precio: Double = 40
-  def porcentaje(heroe: Heroe): Double = heroe.desequipar(this).statPrincipal * 0.1
+  val porcentaje = (heroe: Heroe) => heroe.desequipar(this).statPrincipal * 0.1
   override def HP(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
   override def fuerza(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
   override def velocidad(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)

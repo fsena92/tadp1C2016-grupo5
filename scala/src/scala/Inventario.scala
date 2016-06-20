@@ -42,6 +42,5 @@ case class Inventario(val items: List[Item] = Nil) {
   def velocidadFinal(heroe: Heroe, valor: Double) = obtenerDeItems(heroe, valor)(_ velocidad(_, _))
   def inteligenciaFinal(heroe: Heroe, valor: Double) = obtenerDeItems(heroe, valor)(_ inteligencia(_, _))
     
-
   def cantidadItems = items.size
 }

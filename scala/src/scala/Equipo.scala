@@ -9,7 +9,7 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   def reemplazarMiembro(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
   
   def lider: Option[Heroe] = {
-    if (heroes.map(h => h.statPrincipal).forall(_.== (0))) None
+    if (heroes.map(h => h.statPrincipal).forall(_== 0)) None
     else mejorHeroeSegun(_.statPrincipal)
   }
  
