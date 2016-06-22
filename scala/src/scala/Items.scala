@@ -14,16 +14,16 @@ abstract class Item(val sector: Sector, val precio: Double) {
   def inteligencia(heroe: Heroe, valor: Double) = valor  
 }
 
-object ArmaduraEleganteSport extends Item(Cabeza, precio = 10) {
+object ArmaduraEleganteSport extends Item(Cabeza, 10) {
   override def HP(heroe: Heroe, valor: Double) = valor - 30
   override def velocidad(heroe: Heroe, valor: Double) = valor + 30 
 }
 
-object EspadaDeLaVida extends Item(ArmaSimple, precio = 20) {
+object EspadaDeLaVida extends Item(ArmaSimple, 20) {
   override def fuerza(heroe: Heroe, valor: Double) = heroe.HPFinal
 }
 
-object EscudoAntiRobo extends Item(ArmaSimple, precio = 30) {
+object EscudoAntiRobo extends Item(ArmaSimple, 30) {
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Some(Ladron) => false
     case _ => heroe.fuerzaBase >= 20
@@ -33,7 +33,7 @@ object EscudoAntiRobo extends Item(ArmaSimple, precio = 30) {
   }
 }
 
-object PalitoMagico extends Item(ArmaSimple, precio = 25) {
+object PalitoMagico extends Item(ArmaSimple, 25) {
   override def cumpleCondicion(heroe: Heroe) = heroe.job match {
     case Some(Mago) => true
     case Some(Ladron) => heroe.inteligenciaBase > 30
@@ -44,16 +44,16 @@ object PalitoMagico extends Item(ArmaSimple, precio = 25) {
   }
 }
 
-object ArcoViejo extends Item(ArmaDoble, precio = 15) {
+object ArcoViejo extends Item(ArmaDoble, 15) {
   override def fuerza(heroe: Heroe, valor: Double) = valor + 2
 }
 
-object CascoVikingo extends Item(Cabeza, precio = 5) {
+object CascoVikingo extends Item(Cabeza, 5) {
   override def cumpleCondicion(heroe: Heroe) = heroe.fuerzaBase > 30
   override def HP(heroe: Heroe, valor: Double) = valor + 10
 }
 
-object VinchaDelBufaloDelAgua extends Item(Cabeza, precio = 50) {
+object VinchaDelBufaloDelAgua extends Item(Cabeza, 50) {
   override def cumpleCondicion(heroe: Heroe) = heroe.job.isDefined
   
   override def inteligencia(heroe: Heroe, valor: Double) = {
@@ -70,7 +70,7 @@ object VinchaDelBufaloDelAgua extends Item(Cabeza, precio = 50) {
   }
 }
 
-object Dedicacion extends Item(Talisman, precio = 40) {
+object Dedicacion extends Item(Talisman, 40) {
   def porcentaje(heroe: Heroe) = heroe.desequipar(this).statPrincipal * 0.1
   override def HP(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
   override def fuerza(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
@@ -78,11 +78,11 @@ object Dedicacion extends Item(Talisman, precio = 40) {
   override def inteligencia(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
 }
 
-object Minimalismo extends Item(Talisman, precio = 5) {
+object Minimalismo extends Item(Talisman, 5) {
   override def HP(heroe: Heroe, valor: Double) = valor + 50 - (heroe.cantidadItems - 1) * 10
 }
 
-object Maldito extends Item(Talisman, precio = 100) {  
+object Maldito extends Item(Talisman, 100) {  
   override def HP(heroe: Heroe, valor: Double) = 1
   override def fuerza(heroe: Heroe, valor: Double) = 1
   override def velocidad(heroe: Heroe, valor: Double) = 1
