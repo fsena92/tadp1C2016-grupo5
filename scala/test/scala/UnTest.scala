@@ -2,6 +2,7 @@ package scala
 
 import org.junit.{Test, Before}
 import org.junit.Assert._
+import scala.util.Failure
 
 
 class UnTest  {
@@ -14,15 +15,19 @@ class UnTest  {
    var equipo: Equipo = null
    var otroEquipo: Equipo = null
    var equipito: Equipo = null
+   var equipo2: Equipo = null
+   var icaros: Heroe = null
    
   @Before
   def setup = {
     kratos = new Heroe(50, 45, 10, 10)
+    icaros = new Heroe(50000, 1, 10000, 10000)
     spiderman = new Heroe(10, 35, 60, 40)
     ironMan = new Heroe(50, 10, 40, 100)
     capitanAmerica = new Heroe(70, 30, 60, 20)
     wolverine = new Heroe(1000, 60, 50, 20)
     equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
+    equipo2 = new Equipo("Konami", List(icaros.asignarTrabajo(Guerrero), spiderman))
     equipito = new Equipo("", List(spiderman.asignarTrabajo(Guerrero), ironMan.asignarTrabajo(Mago)))
     otroEquipo = new Equipo("otro", List(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo),
         wolverine.asignarTrabajo(Ladron).equipar(EspadaDeLaVida), capitanAmerica.asignarTrabajo(Guerrero).equipar(CascoVikingo),
@@ -288,6 +293,17 @@ class UnTest  {
   @Test
   def EquipoForzarPuertaYModificaStatsDelHeroe {
     assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 25, 0.01)
+  }
+  
+  @Test
+  def EquipoEsModificadoSiRealizaUnaMision {
+    assertEquals(equipo2.realizarMision(new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))).get.pozoComun, 100,0.01)
+  }
+  
+  @Test
+  def EquipoRealizaUnaMisionYModificaSusStats {
+    assertEquals(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion), PelearContraMonstruo),
+        GanarOroParaElPozoComun(1000))).get.heroes.head.HPFinal, 35, 0.01)
   }
 
 }

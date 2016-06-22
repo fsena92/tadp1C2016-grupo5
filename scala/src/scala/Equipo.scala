@@ -1,5 +1,9 @@
 package scala
 
+import scala.util.{Try, Success, Failure}
+
+case class TareaFallida(equipoQueFallo: Equipo, tarea: Option[Tarea]) extends RuntimeException 
+
 case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
@@ -43,20 +47,23 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
-  def realizarMision(mision: Mision): Equipo = {
-    var flag = true
-    val equipoConMision = mision.tareas.foldLeft(this)((equipo, t) => {
-      if(flag) {
-        if (equipo.elMejorPuedeRealizar(t).isDefined)
-          reemplazarMiembro(equipo.elMejorPuedeRealizar(t).get, equipo.elMejorPuedeRealizar(t).get.realizarTarea(t))
-        else
-          flag = false
-          this
-      }
-      else this
-    })
-    if(equipoConMision != this) equipoConMision.cobrarRecompensa(mision)
-    else this    
+  def realizarMision(mision: Mision): Try[Equipo] = {
+    
+   val equipoAnterior = this
+   var tareaFallida: Option[Tarea] = None
+    
+   val equipoRealizaMision =  mision.tareas.foldLeft(this)((equipo, tarea) => { 
+     if(equipo.elMejorPuedeRealizar(tarea).isDefined) 
+       reemplazarMiembro(equipo.elMejorPuedeRealizar(tarea).get, equipo.elMejorPuedeRealizar(tarea).get.realizarTarea(tarea))
+     else {
+       tareaFallida = Some(tarea)
+       equipoAnterior
+     }
+   })
+
+   if(equipoRealizaMision == equipoAnterior) Failure(TareaFallida(equipoAnterior, tareaFallida)) 
+   else Success(equipoRealizaMision.cobrarRecompensa(mision))
+    
   }
   
   
