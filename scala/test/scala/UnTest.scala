@@ -1,8 +1,7 @@
 package scala
 
-import org.junit.Test
+import org.junit.{Test, Before}
 import org.junit.Assert._
-import org.junit.Before
 
 
 class UnTest  {
@@ -243,7 +242,7 @@ class UnTest  {
   @Test
   def heroeFuerzaPuertaEquipoSinLadron {
     val unEquipo = new Equipo("equipo", List(spiderman.asignarTrabajo(Guerrero), wolverine.asignarTrabajo(Mago)))
-    assertEquals(ForzarPuerta.facilidadPara(unEquipo).get(spiderman.asignarTrabajo(Ladron)), 40, 0.01)
+    assertEquals(ForzarPuerta.facilidadPara(unEquipo).get(spiderman.asignarTrabajo(Guerrero)), 30, 0.01)
   }
   
   @Test
@@ -290,8 +289,6 @@ class UnTest  {
   def EquipoForzarPuertaYModificaStatsDelHeroe {
     assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 25, 0.01)
   }
-  
 
-  
 }
 
