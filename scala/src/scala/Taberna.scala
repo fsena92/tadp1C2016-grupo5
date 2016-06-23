@@ -1,8 +1,7 @@
 package scala
 
 import scala.util.control.Breaks._
-import scala.util.Try
-import scala.util.Success
+import scala.util.{Try, Success, Failure}
 
 case class Taberna(var misiones: Set[Mision]) {
   

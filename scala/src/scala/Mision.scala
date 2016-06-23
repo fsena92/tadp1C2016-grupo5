@@ -14,7 +14,7 @@ case class EncontrarUnItem(val item: Item) extends Recompensa {
 
 case class IncrementarStats(val condicion: Heroe => Boolean, recompensa: StatsRecompensa) extends Recompensa {
   def cobrar(equipo: Equipo): Equipo = {
-    equipo.incrementarStatsDeLosMiembros(equipo.heroes.filter(h => condicion(h)), recompensa)
+    equipo.incrementarStatsMiembros(equipo.heroes.filter(h => condicion(h)), recompensa)
   }
 }
 

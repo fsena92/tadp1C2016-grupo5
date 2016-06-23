@@ -10,7 +10,7 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
 
   def miembrosConTrabajo = heroes.filter(_.job.isDefined)
   
-  def reemplazarMiembro(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
+  def reemplazar(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
   
   def lider: Option[Heroe] = {
     if (heroes.map(h => h.statPrincipal).forall(_== 0)) None
@@ -26,13 +26,13 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
-  def incrementarStatsDeLosMiembros(miembros: List[Heroe], recompensa: StatsRecompensa) = {
+  def incrementarStatsMiembros(miembros: List[Heroe], recompensa: StatsRecompensa) = {
     copy(heroes = heroes.map(_.agregarRecompensaStats(recompensa)))
   }
  
   def obtenerItem(item: Item): Equipo = {
     val maximoHeroe = mejorHeroeSegun(h => h.equipar(item).statPrincipal - h.statPrincipal)  
-    if(maximoHeroe.isDefined) reemplazarMiembro(maximoHeroe.get, maximoHeroe.get.equipar(item))
+    if(maximoHeroe.isDefined) reemplazar(maximoHeroe.get, maximoHeroe.get.equipar(item))
     else incrementarPozo(item.precio)
   }
   
@@ -48,27 +48,18 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
   def realizarMision(mision: Mision): Try[Equipo] = {
-    
    val equipoAnterior = this
    var tareaFallida: Option[Tarea] = None
-    
-   val equipoRealizaMision =  mision.tareas.foldLeft(this)((equipo, tarea) => { 
+   val equipoRealizaMision = mision.tareas.foldLeft(this)((equipo, tarea) => { 
      if(equipo.elMejorPuedeRealizar(tarea).isDefined) 
-       reemplazarMiembro(equipo.elMejorPuedeRealizar(tarea).get, equipo.elMejorPuedeRealizar(tarea).get.realizarTarea(tarea))
+       reemplazar(equipo.elMejorPuedeRealizar(tarea).get, equipo.elMejorPuedeRealizar(tarea).get.realizarTarea(tarea))
      else {
        tareaFallida = Some(tarea)
        equipoAnterior
      }
    })
-
    if(equipoRealizaMision == equipoAnterior) Failure(TareaFallida(equipoAnterior, tareaFallida)) 
    else Success(equipoRealizaMision.cobrarRecompensa(mision))
-    
   }
-  
-  
-  
+   
 }
-
-
-

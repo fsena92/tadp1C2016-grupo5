@@ -2,7 +2,8 @@ package scala
 
 import org.junit.{Test, Before}
 import org.junit.Assert._
-import scala.util.Failure
+import scala.util.{Failure, Try, Success}
+import junit.framework.AssertionFailedError
 
 
 class UnTest  {
@@ -81,6 +82,11 @@ class UnTest  {
     assertEquals(ironMan.equipar(EspadaDeLaVida).fuerzaFinal, 50, 0.01)
   }
 
+  @Test
+  def equiparVincha {
+    assertEquals(ironMan.asignarTrabajo(Mago).equipar(VinchaDelBufaloDelAgua).HPFinal, 60, 0.01)
+  }
+  
   @Test
   def equiparTalismanMinimalismo {
     assertEquals(ironMan.asignarTrabajo(Guerrero).equipar(Minimalismo).HPFinal, 110, 0.01)
@@ -183,8 +189,8 @@ class UnTest  {
   
   @Test
   def SeReemplazaUnMiembroDelEquipoPorOtro {
-    assertFalse(equipo.reemplazarMiembro(spiderman, capitanAmerica).heroes.contains(spiderman))
-    assertTrue(equipo.reemplazarMiembro(spiderman, capitanAmerica).heroes.contains(capitanAmerica))
+    assertFalse(equipo.reemplazar(spiderman, capitanAmerica).heroes.contains(spiderman))
+    assertTrue(equipo.reemplazar(spiderman, capitanAmerica).heroes.contains(capitanAmerica))
   }
   
   @Test
@@ -297,14 +303,32 @@ class UnTest  {
   
   @Test
   def EquipoEsModificadoSiRealizaUnaMision {
-    assertEquals(equipo2.realizarMision(new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))).get.pozoComun, 100,0.01)
+    assertEquals(equipo2.realizarMision(new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100)))
+        .get.pozoComun, 100,0.01)
   }
   
   @Test
   def EquipoRealizaUnaMisionYModificaSusStats {
-    assertEquals(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion), PelearContraMonstruo),
-        GanarOroParaElPozoComun(1000))).get.heroes.head.HPFinal, 35, 0.01)
+    assertEquals(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
+        PelearContraMonstruo),GanarOroParaElPozoComun(1000))).get.heroes.head.HPFinal, 35, 0.01)
   }
+  
+  @Test 
+  def EquipoNoPuedeRealizarUnaTarea {
+    val equipo = new Equipo("equipo", List(new Heroe(1,1,1,1), new Heroe(2,0,0,0)))
+    assertTrue(equipo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).isFailure)
+  }
+  
+  @Test
+  def EquipoNoPuedeRealizarUnaTareaYLaInforma {
+    val equipo = new Equipo("equipo", List(new Heroe(1,1,1,1), new Heroe(2,0,0,0)))
+    assertEquals(equipo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
+    transform(e => Failure(TareaFallida(equipo, Some(RobarTalisman(Maldito)))), f => Try(RobarTalisman(Maldito))).get,
+    RobarTalisman(Maldito))
+  }
+  
+  
+  
 
 }
 
