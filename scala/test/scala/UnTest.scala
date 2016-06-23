@@ -3,8 +3,6 @@ package scala
 import org.junit.{Test, Before}
 import org.junit.Assert._
 import scala.util.{Failure, Try, Success}
-import junit.framework.AssertionFailedError
-
 
 class UnTest  {
    
