@@ -4,13 +4,11 @@ import scala.util.{Try, Success, Failure}
 
 //Opcion 1
 trait Entrenador {
-  def map(f: Equipo => Equipo):Entrenador
   def get: Equipo
   def entrenarMejor(criterio: (Equipo, Equipo) => Boolean): Entrenador
 }
 
 case class Entreno(var equipo: Equipo, var misiones: List[Mision]) extends Entrenador {
-  def map(f: Equipo => Equipo): Entrenador = Entreno(f(equipo), misiones)
   def get = equipo
   def entrenarMejor(criterio: (Equipo, Equipo) => Boolean): Entrenador = {
     val laMision = Taberna(misiones).elegirMision(criterio, equipo, misiones)
@@ -18,12 +16,10 @@ case class Entreno(var equipo: Equipo, var misiones: List[Mision]) extends Entre
     else NoEntrenaMas(equipo, misiones)
   }
 }
+
 case class NoEntrenaMas(var equipo: Equipo, var misiones: List[Mision]) extends Entrenador {
-  def map(f: Equipo => Equipo): Entrenador = NoEntrenaMas(f(equipo), misiones)
   def get = equipo
-  def entrenarMejor(criterio: (Equipo, Equipo) => Boolean): Entrenador = {
-    NoEntrenaMas(equipo, misiones)
-  }
+  def entrenarMejor(criterio: (Equipo, Equipo) => Boolean): Entrenador = NoEntrenaMas(equipo, misiones)
 }
 
 
@@ -42,9 +38,7 @@ case class Taberna(val misiones: List[Mision]) {
 
   def entrenar(equipo: Equipo, criterio: (Equipo, Equipo) => Boolean): Equipo = {
     var m = misiones
-    misiones.foldLeft(Entreno(equipo, m): Entrenador)((entrenado, mision) => {
-        entrenado.entrenarMejor(criterio)
-    }).get
+    misiones.foldLeft(Entreno(equipo, m): Entrenador)((entrenado, mision) => entrenado.entrenarMejor(criterio)).get
   }  
   
   
