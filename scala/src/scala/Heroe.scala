@@ -31,7 +31,5 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
   def agregarRecompensaStats(recompensa: StatsRecompensa) = {
     modificarStats(recompensa.HP, recompensa.fuerza, recompensa.velocidad, recompensa.inteligencia)
   }
-  
-  val statF = HPFinal + " " + fuerzaFinal + " " + velocidadFinal + " " + inteligenciaFinal + "pr" + statPrincipal
-  
+   
 }

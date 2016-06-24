@@ -1,14 +1,13 @@
 package scala
 
-import scala.util.control.Breaks._
 import scala.util.{Try, Success, Failure}
 
 case class Taberna(var misiones: Set[Mision]) {
   
   def elegirMision(criterio: (Equipo, Equipo) => Boolean, unEquipo: Equipo): Mision = {
-        misiones.foldLeft(misiones.head){(mision1, mision2) => 
-        if (criterio(unEquipo.realizarMision(mision1).get, unEquipo.realizarMision(mision2).get)) mision1 
-        else mision2
+        misiones.foldLeft(misiones.head){(unaMision, otraMision) => 
+        if (criterio(unEquipo.realizarMision(unaMision).get, unEquipo.realizarMision(otraMision).get)) unaMision 
+        else otraMision
       }
   }
 

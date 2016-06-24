@@ -346,6 +346,16 @@ class UnTest  {
     assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo), mision2)
   }
   
+  @Test
+  def testElegirMisionNoAfectaElEstadoDelEquipoYaQueEsInmutable {
+    val estado1 = grupo; val estado2 = grupo
+    val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
+    val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))
+    val taberna = new Taberna(Set(mision1, mision2))
+    taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo)
+    assertEquals(estado1, grupo)
+  }
+  
   
   
 
