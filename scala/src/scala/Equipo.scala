@@ -30,10 +30,13 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
     copy(heroes = heroes.map(_.agregarRecompensaStats(recompensa)))
   }
  
-  def obtenerItem(item: Item): Equipo = {
-    val maximoHeroe = mejorHeroeSegun(h => h.equipar(item).statPrincipal - h.statPrincipal)  
-    if(maximoHeroe.isDefined) reemplazar(maximoHeroe.get, maximoHeroe.get.equipar(item))
-    else incrementarPozo(item.precio)
+  def obtenerItem(item: Item) = {
+    val equipoConItem = for {heroe <- mejorHeroeSegun(h => h.equipar(item).statPrincipal - h.statPrincipal)}
+    yield {
+      if(heroe.equipar(item).statPrincipal - heroe.statPrincipal > 0) reemplazar(heroe, heroe.equipar(item))
+      else incrementarPozo(item.precio)
+    }
+    equipoConItem.getOrElse(this)
   }
   
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))

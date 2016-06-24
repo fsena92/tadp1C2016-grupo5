@@ -16,9 +16,11 @@ class UnTest  {
    var equipito: Equipo = null
    var equipo2: Equipo = null
    var icaros: Heroe = null
+   var grupo: Equipo = null
    
   @Before
   def setup = {
+    grupo = new Equipo("equipo", List(new Heroe(1,1,1,1), new Heroe(2,0,0,0)))
     kratos = new Heroe(50, 45, 10, 10)
     icaros = new Heroe(50000, 1, 10000, 10000)
     spiderman = new Heroe(10, 35, 60, 40)
@@ -171,33 +173,33 @@ class UnTest  {
   }
   
   @Test 
-  def HeroeCambiaDeTrabajo {
+  def heroeCambiaDeTrabajo {
     assertEquals(capitanAmerica.asignarTrabajo(Mago).asignarTrabajo(Guerrero).job, Some(Guerrero)) 
   }
   
   @Test
-  def MejorHeroeSegun {
+  def mejorHeroeSegun {
     assertEquals(equipito.mejorHeroeSegun(_.HPBase).get, ironMan.asignarTrabajo(Mago))
   }
   
   @Test
-  def ObtenerMiembro {
+  def obtenerMiembro {
     assertTrue(equipo.agregarMiembro(wolverine).heroes.contains(wolverine)) 
   }
   
   @Test
-  def SeReemplazaUnMiembroDelEquipoPorOtro {
+  def seReemplazaUnMiembroDelEquipoPorOtro {
     assertFalse(equipo.reemplazar(spiderman, capitanAmerica).heroes.contains(spiderman))
     assertTrue(equipo.reemplazar(spiderman, capitanAmerica).heroes.contains(capitanAmerica))
   }
   
   @Test
-  def EquipoNoTieneLiderDefinido {
+  def equipoNoTieneLiderDefinido {
     assertEquals(equipo.lider, None)
   }
   
   @Test
-  def EquipoTieneUnLider {
+  def equipoTieneUnLider {
     assertEquals(equipo.agregarMiembro(capitanAmerica.asignarTrabajo(Guerrero)).
         agregarMiembro(wolverine.asignarTrabajo(Mago)).lider.get, capitanAmerica.asignarTrabajo(Guerrero))
   }
@@ -206,7 +208,19 @@ class UnTest  {
   def incrementarElPozoComunDelEquipo {
     assertEquals(equipo.incrementarPozo(CascoVikingo.precio).pozoComun, 5, 0.01)
   }
-  //TODO: probar obtenerItem
+  
+  @Test
+  def obtenerItemYVender {
+    val unEquipo = new Equipo("equipo", List(new Heroe(0,0,0,0).asignarTrabajo(Guerrero),
+        new Heroe(0,0,0,0).asignarTrabajo(Mago)))
+    assertEquals(unEquipo.obtenerItem(ArcoViejo).heroes.filter(_.HPFinal == 10).head.fuerzaFinal, 17, 0.01)
+  }
+  
+  @Test
+  def obtenerItemYAsignarloAlMejorHeroe {
+    val unEquipo = new Equipo("equipo", List(new Heroe(0,0,0,0).asignarTrabajo(Guerrero).equipar(Maldito)))
+    assertEquals(unEquipo.obtenerItem(ArcoViejo).pozoComun, 15, 0.01)
+  }
   
   @Test
   def heroeRealizaTareaNoAfectaSusStats {
@@ -278,51 +292,58 @@ class UnTest  {
   }
   
   @Test
-  def EquipoNoPuedeRealizarTareaSuLiderNoEsLadri {
+  def equipoNoPuedeRealizarTareaSuLiderNoEsLadri {
     assertEquals(otroEquipo.elMejorPuedeRealizar(RobarTalisman(Maldito)), 
         Some(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo)))
   }
   
   @Test
-  def EquipoNoPuedePelearContraMonstruoNoHayCandidatoMejorSegun {
+  def equipoNoPuedePelearContraMonstruoNoHayCandidatoMejorSegun {
     assertEquals(otroEquipo.elMejorPuedeRealizar(PelearContraMonstruo),
         Some(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo)))
   }
   
   @Test
-  def EquipoPuedeRealizarLaTareaDeForzarPuerta {
+  def equipoPuedeRealizarLaTareaDeForzarPuerta {
     assertTrue(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).isDefined)
   }
   
   @Test
-  def EquipoForzarPuertaYModificaStatsDelHeroe {
+  def equipoForzarPuertaYModificaStatsDelHeroe {
     assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 25, 0.01)
   }
   
   @Test
-  def EquipoEsModificadoSiRealizaUnaMision {
+  def equipoEsModificadoSiRealizaUnaMision {
     assertEquals(equipo2.realizarMision(new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100)))
         .get.pozoComun, 100,0.01)
   }
   
   @Test
-  def EquipoRealizaUnaMisionYModificaSusStats {
+  def equipoRealizaUnaMisionYModificaSusStats {
     assertEquals(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
         PelearContraMonstruo),GanarOroParaElPozoComun(1000))).get.heroes.head.HPFinal, 35, 0.01)
   }
   
   @Test 
-  def EquipoNoPuedeRealizarUnaTarea {
-    val equipo = new Equipo("equipo", List(new Heroe(1,1,1,1), new Heroe(2,0,0,0)))
-    assertTrue(equipo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).isFailure)
+  def equipoNoPuedeRealizarUnaTarea {
+    assertTrue(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).isFailure)
   }
   
   @Test
-  def EquipoNoPuedeRealizarUnaTareaYLaInforma {
-    val equipo = new Equipo("equipo", List(new Heroe(1,1,1,1), new Heroe(2,0,0,0)))
-    assertEquals(equipo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
+  def equipoNoPuedeRealizarUnaTareaYLaInforma {
+    assertEquals(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
     transform(e => Failure(TareaFallida(equipo, Some(RobarTalisman(Maldito)))), f => Try(RobarTalisman(Maldito))).get,
     RobarTalisman(Maldito))
+  }
+  
+  @Test
+  def testElegirMision {
+    val estado1 = grupo; val estado2 = grupo
+    val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
+    val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))
+    val taberna = new Taberna(Set(mision1, mision2))
+    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo), mision2)
   }
   
   
