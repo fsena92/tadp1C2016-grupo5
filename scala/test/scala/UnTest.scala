@@ -342,8 +342,8 @@ class UnTest  {
     val estado1 = grupo; val estado2 = grupo
     val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))
-    val taberna = new Taberna(Set(mision1, mision2))
-    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo), mision2)
+    val taberna = new Taberna(List(mision1, mision2))
+    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo, List(mision1, mision2)).get, mision2)
   }
   
   @Test
@@ -351,9 +351,17 @@ class UnTest  {
     val estado1 = grupo; val estado2 = grupo
     val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))
-    val taberna = new Taberna(Set(mision1, mision2))
-    taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo)
+    val taberna = new Taberna(List(mision1, mision2))
+    taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo, List(mision1, mision2))
     assertEquals(estado1, grupo)
+  }
+  
+  @Test
+  def noPuedeRealizarMision {
+    val estado1 = grupo; val estado2 = grupo
+    val mision = new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))
+    val taberna = new Taberna(List(mision))
+    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo, List(mision)), None)
   }
   
   
