@@ -13,8 +13,8 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   def reemplazar(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
   
   def lider: Option[Heroe] = {
-    if (heroes.map(h => h.statPrincipal).forall(_== 0)) None
-    else mejorHeroeSegun(_.statPrincipal)
+    if (miembrosConTrabajo.isEmpty) None
+    else copy(heroes = miembrosConTrabajo).mejorHeroeSegun(_.statPrincipal.get)
   }
  
   def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
@@ -31,9 +31,9 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   }
  
   def obtenerItem(item: Item) = {
-    val equipoConItem = for {heroe <- mejorHeroeSegun(h => h.equipar(item).statPrincipal - h.statPrincipal)}
+    val equipoConItem = for {heroe <- mejorHeroeSegun(h => h.equipar(item).statPrincipal.get - h.statPrincipal.get)}
     yield {
-      if(heroe.equipar(item).statPrincipal - heroe.statPrincipal > 0) reemplazar(heroe, heroe.equipar(item))
+      if(heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get > 0) reemplazar(heroe, heroe.equipar(item))
       else incrementarPozo(item.precio)
     }
     equipoConItem.getOrElse(this)

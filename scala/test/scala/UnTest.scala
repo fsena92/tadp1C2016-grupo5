@@ -84,7 +84,7 @@ class UnTest  {
 
   @Test
   def equiparVincha {
-    assertEquals(ironMan.asignarTrabajo(Mago).equipar(VinchaDelBufaloDelAgua).HPFinal, 60, 0.01)
+    assertEquals(ironMan.equipar(VinchaDelBufaloDelAgua).HPFinal, 60, 0.01)
   }
   
   @Test

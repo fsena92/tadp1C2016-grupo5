@@ -54,7 +54,7 @@ object CascoVikingo extends Item(Cabeza, 5) {
 }
 
 object VinchaDelBufaloDelAgua extends Item(Cabeza, 50) {
-  override def cumpleCondicion(heroe: Heroe) = heroe.job.isDefined
+  override def cumpleCondicion(heroe: Heroe) = !heroe.job.isDefined
   
   override def inteligencia(heroe: Heroe, valor: Double) = {
     if(heroe.fuerzaBase > heroe.inteligenciaBase) valor + 30 ; else valor
@@ -71,7 +71,7 @@ object VinchaDelBufaloDelAgua extends Item(Cabeza, 50) {
 }
 
 object Dedicacion extends Item(Talisman, 40) {
-  def porcentaje(heroe: Heroe) = heroe.desequipar(this).statPrincipal * 0.1
+  def porcentaje(heroe: Heroe) = heroe.desequipar(this).statPrincipal.getOrElse(0: Double) * 0.1
   override def HP(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
   override def fuerza(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)
   override def velocidad(heroe: Heroe, valor: Double) = valor + porcentaje(heroe)

@@ -7,28 +7,26 @@ case class Inventario(val items: List[Item] = Nil) {
   def equipar(heroe: Heroe, item: Item) = {
     if(item.cumpleCondicion(heroe)) {
       item.sector match {    
-        case Cabeza => equiparCabeza(item)
-        case Armadura => equiparArmadura(item)
+        case Cabeza => equiparItem(item, _.sector eq Cabeza)
+        case Armadura => equiparItem(item, _.sector eq Armadura)
         case ArmaSimple => equiparArmaSimple(item)
-        case ArmaDoble => equiparArmaDoble(item)
-        case Talisman => equiparTalisman(item)
+        case ArmaDoble => equiparItem(item, i => i.sector == ArmaSimple | i.sector == ArmaDoble)
+        case Talisman => equiparItem(item, i => false)
       }
     }
     else this
   }
   
-  def equiparTalisman(item: Item) = copy(item :: items)
-  def equiparCabeza(item: Item) = copy(item :: items.filterNot(_.sector eq Cabeza))
-  def equiparArmadura(item: Item) = copy(item :: items.filterNot(_.sector eq Armadura))
-  def equiparArmaDoble(item: Item) = copy (item :: items.filterNot(i => i.sector == ArmaSimple | i.sector == ArmaDoble))
+  def equiparItem(item: Item, condicion: Item => Boolean) = copy(item :: items.filterNot(condicion))
+  
   def equiparArmaSimple(item: Item) = {
     val armas = items.filter(_.sector eq ArmaSimple)
     val armaDoble = items.filter(_.sector eq ArmaDoble)
     if (armaDoble.size < 1) {
-      if (armas.size < 2) copy(item :: items)
+      if (armas.size < 2) equiparItem(item, i => false)
       else copy(item :: armas.head :: items.filterNot(_.sector eq ArmaSimple))
     }
-    else copy(item :: items.filterNot(_.sector eq ArmaDoble))
+    else equiparItem(item, _.sector eq ArmaDoble)
   }
 
   def desequipar(item: Item) = copy(items.filterNot(_ eq item))
