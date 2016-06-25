@@ -42,11 +42,11 @@ case class Inventario(val items: List[Item] = Nil) {
   def velocidadFinal(heroe: Heroe, valor: Double) = obtenerDeItems(heroe, valor)(_ velocidad(_, _))
   def inteligenciaFinal(heroe: Heroe, valor: Double) = obtenerDeItems(heroe, valor)(_ inteligencia(_, _))
  
-  // otra opcion
-//  def fuerzaFinal = obtenerDeItems((_:Heroe), (_:Double))(_ fuerza(_, _))
-//  def HPFinal = obtenerDeItems((_:Heroe), (_:Double))(_ HP(_, _))
-//  def velocidadFinal = obtenerDeItems((_:Heroe), (_:Double))(_ velocidad(_, _))
-//  def inteligenciaFinal = obtenerDeItems((_:Heroe), (_:Double))(_ inteligencia(_, _))
+  //opcion 2
+//  def fuerzaFinal = obtenerDeItems(_:Heroe, _:Double)(_ fuerza(_, _))
+//  def HPFinal = obtenerDeItems(_:Heroe, _:Double)(_ HP(_, _))
+//  def velocidadFinal = obtenerDeItems(_:Heroe, _:Double)(_ velocidad(_, _))
+//  def inteligenciaFinal = obtenerDeItems(_:Heroe, _:Double)(_ inteligencia(_, _))
 //  
   
   
