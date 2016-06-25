@@ -9,10 +9,8 @@ case object PelearContraMonstruo extends Tarea {
   def facilidadPara(equipo: Equipo) = {
    val facilidad: Option[Heroe => Double] = for {
      lider <- equipo.lider; trabajo <- lider.job 
-   } yield { 
-     if(trabajo eq Guerrero) h => 20 
-     else h => 10
-   }
+     if(trabajo eq Guerrero)
+   } yield h => 20 
    facilidad.orElse(Some(h => 10))
   }
   override def afectar(heroe: Heroe) = {
@@ -30,11 +28,8 @@ case object ForzarPuerta extends Tarea {
 }
 
 case class RobarTalisman(val talisman: Item) extends Tarea {
-   def facilidadPara(equipo: Equipo) = {
-     val facilidad: Option[Option[Heroe => Double]] = for {
-       lider <- equipo.lider; trabajo <- lider.job 
-       if(trabajo eq Ladron)
-     } yield Some(_.velocidadFinal)
-     facilidad.getOrElse(None)
-  }
+   def facilidadPara(equipo: Equipo) = for {
+     lider <- equipo.lider; trabajo <- lider.job 
+     if(trabajo eq Ladron)
+   } yield _.velocidadFinal
 }
