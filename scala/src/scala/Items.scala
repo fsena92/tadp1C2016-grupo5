@@ -28,9 +28,7 @@ object EscudoAntiRobo extends Item(ArmaSimple, 30) {
     case Some(Ladron) => false
     case _ => heroe.fuerzaBase >= 20
   }
-  override def HP(heroe: Heroe, valor: Double) = {
-    if(cumpleCondicion(heroe)) valor + 20 ; else valor
-  }
+  override def HP(heroe: Heroe, valor: Double) = valor + 20
 }
 
 object PalitoMagico extends Item(ArmaSimple, 25) {
@@ -39,9 +37,7 @@ object PalitoMagico extends Item(ArmaSimple, 25) {
     case Some(Ladron) => heroe.inteligenciaBase > 30
     case _ => false
   }
-  override def inteligencia(heroe: Heroe, valor: Double) = {
-    if(cumpleCondicion(heroe)) valor + 20 ; else valor
-  }
+  override def inteligencia(heroe: Heroe, valor: Double) = valor + 20
 }
 
 object ArcoViejo extends Item(ArmaDoble, 15) {

@@ -17,6 +17,8 @@ case class Inventario(val items: List[Item] = Nil) {
     else this
   }
   
+  def actualizarInventario(heroe: Heroe) = copy(items = items.filter(_.cumpleCondicion(heroe)))
+  
   def equiparItem(item: Item, condicion: Item => Boolean) = copy(item :: items.filterNot(condicion))
   
   def equiparArmaSimple(item: Item) = {
