@@ -26,7 +26,7 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
           inteligenciaBase = inteligenciaBase + inteligencia)
   }
   
-  def realizarTarea(unaTarea: Tarea) = unaTarea.afectar(this)
+  def realizarTarea = (_:Tarea) afectar this
   
   def agregarRecompensaStats(recompensa: StatsRecompensa) = {
     modificarStats(recompensa.HP, recompensa.fuerza, recompensa.velocidad, recompensa.inteligencia)
