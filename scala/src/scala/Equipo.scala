@@ -3,7 +3,6 @@ package scala
 import scala.util.{Try, Success, Failure}
 
 case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
-case object FalloMision extends Exception
 
 case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoComun: Double = 0) {
   
