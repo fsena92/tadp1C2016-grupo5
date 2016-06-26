@@ -26,8 +26,8 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
   
-  def incrementarStatsMiembros(miembros: List[Heroe], recompensa: StatsRecompensa) = {
-    copy(heroes = heroes.map(_.agregarRecompensaStats(recompensa)))
+  def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: StatsRecompensa) = {
+    copy(heroes = heroes.filter(condicion(_)).map(_.agregarRecompensaStats(recompensa)))
   }
  
   def obtenerItem(item: Item) = {
