@@ -2,14 +2,12 @@ package scala
 
 import scala.util.{Try, Success, Failure}
 
-case class TareaFallida(equipoQueFallo: Equipo, tarea: Option[Tarea]) extends RuntimeException 
+case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
 
-case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoComun: Double = 0) {
+case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
-
   def miembrosConTrabajo = heroes.filter(_.job.isDefined)
-  
   def reemplazar(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
   
   def lider: Option[Heroe] = {
@@ -18,10 +16,10 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   }
  
   def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
-      val maximo = heroes.map(cuantificador(_)).max
-      val heroe = heroes.filter(cuantificador(_) == maximo)
-      if (heroe.size == 0) None
-      else Some(heroe.head) 
+    val maximo = heroes.map(cuantificador(_)).max
+    val heroe = heroes.filter(cuantificador(_) == maximo)
+    if (heroe.size == 0) None
+    else Some(heroe.head) 
   }
   
   def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
@@ -43,28 +41,20 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))
   
   def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
-    for {
-      facilidad <- tarea.facilidadPara(this)
-      elMejor <- mejorHeroeSegun(facilidad) 
-    }
+    for {facilidad <- tarea.facilidadPara(this) ; elMejor <- mejorHeroeSegun(facilidad)}
     yield elMejor
   }
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
   def realizarMision(mision: Mision): Try[Equipo] = {
-   val equipoAnterior = this
-   var tareaFallida: Option[Tarea] = None
-   val equipoRealizaMision = mision.tareas.foldLeft(this)((equipo, tarea) => { 
-     if(equipo.elMejorPuedeRealizar(tarea).isDefined) 
-       reemplazar(equipo.elMejorPuedeRealizar(tarea).get, equipo.elMejorPuedeRealizar(tarea).get.realizarTarea(tarea))
-     else {
-       tareaFallida = Some(tarea)
-       equipoAnterior
-     }
-   })
-   if(equipoRealizaMision == equipoAnterior) Failure(TareaFallida(equipoAnterior, tareaFallida)) 
-   else Success(equipoRealizaMision.cobrarRecompensa(mision))
+    Try(mision.tareas.foldLeft(this)((equipo, tarea) => {
+        val puedeRealizar = for {heroe <- equipo.elMejorPuedeRealizar(tarea)}
+        yield reemplazar(heroe, heroe.realizarTarea(tarea))
+        puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea)).cobrarRecompensa(mision)})    
+    )
   }
-   
+  
+  
+  
 }

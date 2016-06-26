@@ -317,29 +317,24 @@ class UnTest  {
     assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 25, 0.01)
   }
   
-//  @Test
-//  def equipoEsModificadoSiRealizaUnaMision {
-//    assertEquals(equipo2.realizarMision(new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100)))
-//        .get.pozoComun, 100,0.01)
-//  }
+  @Test
+  def equipoEsModificadoSiRealizaUnaMision {
+    assertEquals(equipo2.realizarMision(new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100)))
+        .get.pozoComun, 100,0.01)
+  }
   
-//  @Test
-//  def equipoRealizaUnaMisionYModificaSusStats {
-//    assertEquals(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
-//        PelearContraMonstruo),GanarOroParaElPozoComun(1000))).get.heroes.head.HPFinal, 35, 0.01)
-//  }
+  @Test
+  def equipoNoPuedeRealizarUnaMisionSinLider {
+    assertTrue(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
+        PelearContraMonstruo),GanarOroParaElPozoComun(1000))).isFailure)
+  }
   
-//  @Test 
-//  def equipoNoPuedeRealizarUnaTarea {
-//    assertTrue(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).isFailure)
-//  }
-  
-//  @Test
-//  def equipoNoPuedeRealizarUnaTareaYLaInforma {
-//    assertEquals(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
-//    transform(e => Failure(TareaFallida(equipo, Some(RobarTalisman(Maldito)))), f => Try(RobarTalisman(Maldito))).get,
-//    RobarTalisman(Maldito))
-//  }
+  @Test
+  def equipoNoPuedeRealizarUnaTareaYLaInforma {
+    assertEquals(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
+    transform(e => Failure(TareaFallida(equipo, RobarTalisman(Maldito))), f => Try(RobarTalisman(Maldito))).get,
+    RobarTalisman(Maldito))
+  }
   
   @Test
   def testElegirMision {
