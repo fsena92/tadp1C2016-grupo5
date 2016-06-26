@@ -43,10 +43,11 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))
   
   def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
-    mejorHeroeSegun(h => tarea.facilidadPara(this) match {
-      case Some(facilidad) => facilidad(h)
-      case None => 0
-    }) 
+    for {
+      facilidad <- tarea.facilidadPara(this)
+      elMejor <- mejorHeroeSegun(facilidad) 
+    }
+    yield elMejor
   }
   
   def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)

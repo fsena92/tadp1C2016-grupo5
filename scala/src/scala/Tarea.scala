@@ -31,5 +31,5 @@ case class RobarTalisman(val talisman: Item) extends Tarea {
    def facilidadPara(equipo: Equipo) = for {
      lider <- equipo.lider; trabajo <- lider.job 
      if(trabajo eq Ladron)
-   } yield _.velocidadFinal
+   } yield _ velocidadFinal
 }
