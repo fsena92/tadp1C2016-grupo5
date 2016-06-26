@@ -27,16 +27,12 @@ object Main {
     val equipo2 = new Equipo("Konami", List(icaros.asignarTrabajo(Guerrero), spiderman))
     val equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
     
-    println(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
-  transform(e => Failure(TareaFallida(equipo, RobarTalisman(Maldito))), f => Try(equipo)).get)
-    
-    println(equipo.lider)
 
-    println(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
-        PelearContraMonstruo),GanarOroParaElPozoComun(1000))))
-  
+    println(spiderman.equipar(ArcoViejo).fuerzaFinal)
+   
+    println(capitanAmerica.equipar(VinchaDelBufaloDelAgua).asignarTrabajo(Guerrero).inventario.items.size)
     
-    
+    println(kratos.asignarTrabajo(Guerrero).equipar(VinchaDelBufaloDelAgua))
     
     
     

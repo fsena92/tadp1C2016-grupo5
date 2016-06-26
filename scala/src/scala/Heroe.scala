@@ -12,7 +12,7 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
   
   def mayorAUno(valorStat: Double) = if(valorStat < 1) 1 ; else valorStat
   
-  def equipar(item: Item) = copy(inventario = inventario.equipar(this, item))
+  def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
   
   def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo)).actualizarEstado
     

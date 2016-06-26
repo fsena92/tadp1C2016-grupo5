@@ -1,11 +1,15 @@
 package scala
 
 import Sector._
+import scala.util.{Try, Success, Failure}
+
+case object NoSePudoEquiparUnItem extends Exception
 
 case class Inventario(val items: List[Item] = Nil) {
    
-  def equipar(heroe: Heroe, item: Item) = {
-    if(item.cumpleCondicion(heroe)) {
+  def equipar(heroe: Heroe, item: Item): Try[Inventario] = {
+    var i = 0
+    Try(if(item.cumpleCondicion(heroe)) {
       item.sector match {    
         case Cabeza => equiparItem(item, _.sector eq Cabeza)
         case Armadura => equiparItem(item, _.sector eq Armadura)
@@ -14,7 +18,10 @@ case class Inventario(val items: List[Item] = Nil) {
         case Talisman => equiparItem(item, i => false)
       }
     }
-    else this
+    else {
+      throw NoSePudoEquiparUnItem
+    }
+    )
   }
   
   def actualizarInventario(heroe: Heroe) = copy(items = items.filter(_.cumpleCondicion(heroe)))
