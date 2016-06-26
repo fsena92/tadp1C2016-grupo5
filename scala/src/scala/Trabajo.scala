@@ -1,23 +1,23 @@
 package scala
 
-abstract class Trabajo(val HP: Double = 0, val fuerza: Double = 0, 
-    val velocidad: Double = 0, val inteligencia: Double = 0) {
+abstract class Trabajo(val _HP: Double = 0, val _fuerza: Double = 0, 
+    val _velocidad: Double = 0, val _inteligencia: Double = 0) {
   
-  def fuerza(valor: Double):Double = valor + fuerza
-  def HP(valor: Double): Double = valor + HP
-  def velocidad(valor: Double): Double = valor + velocidad
-  def inteligencia(valor: Double): Double = valor + inteligencia
+  def fuerza = (_:Double) + _fuerza
+  def HP = (_:Double) + _HP
+  def velocidad = (_:Double) + _velocidad
+  def inteligencia = (_:Double) + _inteligencia
   
   def statPrincipal(heroe: Heroe):Double
   
 }
 
-case object Guerrero extends Trabajo(HP = 10, fuerza = 15, inteligencia = -10) {
+case object Guerrero extends Trabajo(_HP = 10, _fuerza = 15, _inteligencia = -10) {
   def statPrincipal(heroe: Heroe) = heroe.fuerzaFinal
 }
-case object Mago extends Trabajo(fuerza = 20, inteligencia = 20) {
+case object Mago extends Trabajo(_fuerza = 20, _inteligencia = 20) {
   def statPrincipal(heroe: Heroe) = heroe.inteligenciaFinal
 }
-case object Ladron extends Trabajo (HP = -5, velocidad = 10) {
+case object Ladron extends Trabajo (_HP = -5, _velocidad = 10) {
   def statPrincipal(heroe: Heroe) = heroe.velocidadFinal
 }

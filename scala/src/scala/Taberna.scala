@@ -19,6 +19,8 @@ case class Taberna(val misiones: List[Mision]) {
     else None
   }
 
+  def misionRealizada(mision: Mision) = copy(misiones = misiones.filterNot(_ eq mision))
+  
 //  def entrenar(equipo: Equipo, criterio: (Equipo, Equipo) => Boolean): Equipo = {
 //    var m = misiones
 //    misiones.foldLeft(Entreno(equipo, m): Entrenador)((entrenado, mision) => entrenado.entrenarMejor(criterio)).get

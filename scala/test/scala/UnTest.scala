@@ -293,8 +293,7 @@ class UnTest  {
   
   @Test
   def equipoNoPuedeRealizarTareaSuLiderNoEsLadri {
-    assertEquals(otroEquipo.elMejorPuedeRealizar(RobarTalisman(Maldito)), 
-        Some(spiderman.asignarTrabajo(Mago).equipar(PalitoMagico).equipar(EscudoAntiRobo)))
+    assertEquals(otroEquipo.elMejorPuedeRealizar(RobarTalisman(Maldito)),None)
   }
   
   @Test
@@ -313,29 +312,29 @@ class UnTest  {
     assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 25, 0.01)
   }
   
-  @Test
-  def equipoEsModificadoSiRealizaUnaMision {
-    assertEquals(equipo2.realizarMision(new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100)))
-        .get.pozoComun, 100,0.01)
-  }
+//  @Test
+//  def equipoEsModificadoSiRealizaUnaMision {
+//    assertEquals(equipo2.realizarMision(new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100)))
+//        .get.pozoComun, 100,0.01)
+//  }
   
-  @Test
-  def equipoRealizaUnaMisionYModificaSusStats {
-    assertEquals(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
-        PelearContraMonstruo),GanarOroParaElPozoComun(1000))).get.heroes.head.HPFinal, 35, 0.01)
-  }
+//  @Test
+//  def equipoRealizaUnaMisionYModificaSusStats {
+//    assertEquals(equipo.realizarMision(new Mision(List(PelearContraMonstruo, ForzarPuerta, RobarTalisman(Dedicacion),
+//        PelearContraMonstruo),GanarOroParaElPozoComun(1000))).get.heroes.head.HPFinal, 35, 0.01)
+//  }
   
-  @Test 
-  def equipoNoPuedeRealizarUnaTarea {
-    assertTrue(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).isFailure)
-  }
+//  @Test 
+//  def equipoNoPuedeRealizarUnaTarea {
+//    assertTrue(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).isFailure)
+//  }
   
-  @Test
-  def equipoNoPuedeRealizarUnaTareaYLaInforma {
-    assertEquals(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
-    transform(e => Failure(TareaFallida(equipo, Some(RobarTalisman(Maldito)))), f => Try(RobarTalisman(Maldito))).get,
-    RobarTalisman(Maldito))
-  }
+//  @Test
+//  def equipoNoPuedeRealizarUnaTareaYLaInforma {
+//    assertEquals(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
+//    transform(e => Failure(TareaFallida(equipo, Some(RobarTalisman(Maldito)))), f => Try(RobarTalisman(Maldito))).get,
+//    RobarTalisman(Maldito))
+//  }
   
   @Test
   def testElegirMision {
@@ -343,7 +342,7 @@ class UnTest  {
     val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))
     val taberna = new Taberna(List(mision1, mision2))
-    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo, List(mision1, mision2)).get, mision2)
+    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo).get, mision2)
   }
   
   @Test
@@ -352,7 +351,7 @@ class UnTest  {
     val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))
     val taberna = new Taberna(List(mision1, mision2))
-    taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo, List(mision1, mision2))
+    taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo)
     assertEquals(estado1, grupo)
   }
   
@@ -361,17 +360,17 @@ class UnTest  {
     val estado1 = grupo; val estado2 = grupo
     val mision = new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))
     val taberna = new Taberna(List(mision))
-    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo, List(mision)), None)
+    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo), None)
   }
   
-  @Test
-  def equipoPuedeEntrenar {
-  val estado1 = grupo; val estado2 = grupo
-    val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
-    val taberna = new Taberna(List(mision1))
-    assertEquals(taberna.entrenar(grupo, (estado1, estado2) => estado1.pozoComun > estado2.pozoComun), 
-        grupo.realizarMision(mision1).get)
-  }
+//  @Test
+//  def equipoPuedeEntrenar {
+//  val estado1 = grupo; val estado2 = grupo
+//    val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
+//    val taberna = new Taberna(List(mision1))
+//    assertEquals(taberna.entrenar(grupo, (estado1, estado2) => estado1.pozoComun > estado2.pozoComun), 
+//        grupo.realizarMision(mision1).get)
+//  }
   
   
 
