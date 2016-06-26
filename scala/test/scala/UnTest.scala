@@ -34,6 +34,11 @@ class UnTest  {
         wolverine.asignarTrabajo(Ladron).equipar(EspadaDeLaVida), capitanAmerica.asignarTrabajo(Guerrero).equipar(CascoVikingo),
         kratos.equipar(VinchaDelBufaloDelAgua).equipar(ArcoViejo)))        
   }
+   
+  @Test
+  def testHeroeConsistenteFrenteACambios {
+    assertEquals(capitanAmerica.equipar(VinchaDelBufaloDelAgua).asignarTrabajo(Guerrero).inventario.items.size, 0, 0.01)
+  }
   
   @Test
   def heroeSeConvierteEnGuerrero {
