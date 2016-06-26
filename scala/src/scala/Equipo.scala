@@ -18,8 +18,8 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
   }
  
   def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
-      val maximo = heroes.map(h => cuantificador(h)).max
-      val heroe = heroes.filter(h => cuantificador(h) == maximo)
+      val maximo = heroes.map(cuantificador(_)).max
+      val heroe = heroes.filter(cuantificador(_) == maximo)
       if (heroe.size == 0) None
       else Some(heroe.head) 
   }
@@ -30,13 +30,14 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, var pozoCom
     copy(heroes = heroes.filter(condicion(_)).map(_.agregarRecompensaStats(recompensa)))
   }
  
-  def obtenerItem(item: Item) = {
-    val equipoConItem = for {heroe <- mejorHeroeSegun(h => h.equipar(item).statPrincipal.get - h.statPrincipal.get)}
-    yield {
-      if(heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get > 0) reemplazar(heroe, heroe.equipar(item))
-      else incrementarPozo(item.precio)
+  def incrementoStat(heroe: Heroe, item: Item): Double = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
+ 
+  def obtenerItem(item: Item): Equipo = {
+    val equipoConItem = for {heroe <- mejorHeroeSegun(h => incrementoStat(h, item))
+      if(incrementoStat(heroe, item) > 0)
     }
-    equipoConItem.getOrElse(this)
+    yield reemplazar(heroe, heroe.equipar(item))
+    equipoConItem.getOrElse(incrementarPozo(item.precio))
   }
   
   def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))
