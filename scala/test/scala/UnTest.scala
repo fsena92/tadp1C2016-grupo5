@@ -359,14 +359,15 @@ class UnTest  {
     assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo), None)
   }
   
-//  @Test
-//  def equipoPuedeEntrenar {
-//  val estado1 = grupo; val estado2 = grupo
-//    val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
-//    val taberna = new Taberna(List(mision1))
-//    assertEquals(taberna.entrenar(grupo, (estado1, estado2) => estado1.pozoComun > estado2.pozoComun), 
-//        grupo.realizarMision(mision1).get)
-//  }
+  @Test
+  def equipoPuedeEntrenar {
+    val estado1 = grupo
+    val estado2 = grupo
+    val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
+    val taberna = new Taberna(List(mision1))
+    assertEquals(grupo.entrenar(taberna, (estado1, estado2) => estado1.pozoComun > estado2.pozoComun), 
+        grupo.realizarMision(mision1).get)
+  }
   
   
 

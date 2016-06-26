@@ -28,27 +28,15 @@ object Main {
     val equipo = new Equipo("vengadores_2", List(spiderman, ironMan))
     
 
-    println(spiderman.equipar(ArcoViejo).fuerzaFinal)
-   
-    println(capitanAmerica.equipar(VinchaDelBufaloDelAgua).asignarTrabajo(Guerrero).inventario.items.size)
-    
-    println(kratos.asignarTrabajo(Guerrero).equipar(VinchaDelBufaloDelAgua))
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+  val estado1 = grupo
+  val estado2 = grupo
+  val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
+  val taberna = new Taberna(List(mision1))
+  println(grupo.entrenar(taberna, (estado1, estado2) => estado1.pozoComun > estado2.pozoComun).pozoComun)
+ 
+  println(grupo.realizarMision(mision1).get.pozoComun)
     
   }
+  
   
 }

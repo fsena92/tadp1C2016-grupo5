@@ -3,6 +3,7 @@ package scala
 import scala.util.{Try, Success, Failure}
 
 case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
+case object FalloMision extends Exception
 
 case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoComun: Double = 0) {
   
@@ -17,8 +18,8 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
  
   def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
     val maximo = heroes.map(cuantificador(_)).max
-    val heroe = heroes.filter(cuantificador(_) == maximo)
-    if (heroe.size == 0) None
+    val heroe = heroes.filter(cuantificador(_) equals maximo)
+    if (heroe.isEmpty) None
     else Some(heroe.head) 
   }
   
@@ -28,8 +29,8 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
     copy(heroes = heroes.filter(condicion(_)).map(_.agregarRecompensaStats(recompensa)))
   }
  
-  def incrementoStat(heroe: Heroe, item: Item): Double = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
- 
+  def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
+  
   def obtenerItem(item: Item): Equipo = {
     val equipoConItem = for {heroe <- mejorHeroeSegun(h => incrementoStat(h, item))
       if(incrementoStat(heroe, item) > 0)
@@ -49,12 +50,42 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
   
   def realizarMision(mision: Mision): Try[Equipo] = {
     Try(mision.tareas.foldLeft(this)((equipo, tarea) => {
-        val puedeRealizar = for {heroe <- equipo.elMejorPuedeRealizar(tarea)}
-        yield reemplazar(heroe, heroe.realizarTarea(tarea))
-        puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea)).cobrarRecompensa(mision)})    
+      val puedeRealizar = for {heroe <- equipo.elMejorPuedeRealizar(tarea)}
+      yield reemplazar(heroe, heroe.realizarTarea(tarea))
+      puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea)).cobrarRecompensa(mision)})    
     )
   }
   
+  def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
+    var tab = taberna
+    var equipo = this
+    val misionElegida = tab.elegirMision(criterio, equipo)
+    if(misionElegida.isDefined) {
+      if(equipo.realizarMision(misionElegida.get).isSuccess) {
+        equipo = equipo.realizarMision(misionElegida.get).get
+        tab = tab.misionRealizada(misionElegida.get)
+        equipo.entrenar(tab, criterio)
+      }
+      else equipo
+    }
+    else equipo
+  }
   
-  
+  // Opcion con for
+//    def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
+//      var tab = taberna
+//      var eq: Equipo = this
+//      val asd = for {
+//        misionElegida <- tab.elegirMision(criterio, eq)
+//        equipo <- eq.realizarMision(misionElegida).toOption
+//      }
+//      yield {
+//        tab = tab.misionRealizada(misionElegida)
+//        equipo.entrenar(taberna, criterio)
+//      }
+//      asd.getOrElse(eq)
+//  }
+    
+    
+    
 }
