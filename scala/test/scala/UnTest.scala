@@ -328,7 +328,7 @@ class UnTest  {
   @Test
   def equipoNoPuedeRealizarUnaTareaYLaInforma {
     assertEquals(grupo.realizarMision(new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))).
-    transform(e => Failure(TareaFallida(equipo, RobarTalisman(Maldito))), f => Try(RobarTalisman(Maldito))).get,
+    transform(e => Failure(new TareaFallida(equipo, RobarTalisman(Maldito))), f => Try(RobarTalisman(Maldito))).get,
     RobarTalisman(Maldito))
   }
   

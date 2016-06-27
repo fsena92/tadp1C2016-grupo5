@@ -3,14 +3,13 @@ package scala
 import Sector._
 import scala.util.{Try, Success, Failure}
 
-case object NoSePudoEquiparUnItem extends Exception
+object NoSePudoEquiparUnItem extends Exception
 
 case class Inventario(val items: List[Item] = Nil) {
    
-  def equipar(heroe: Heroe, item: Item): Try[Inventario] = {
-    var i = 0
-    Try(if(item.cumpleCondicion(heroe)) {
-      item.sector match {    
+  def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try(
+    if(item cumpleCondicion heroe) {
+      item sector match {    
         case Cabeza => equiparItem(item, _.sector eq Cabeza)
         case Armadura => equiparItem(item, _.sector eq Armadura)
         case ArmaSimple => equiparArmaSimple(item)
@@ -18,11 +17,8 @@ case class Inventario(val items: List[Item] = Nil) {
         case Talisman => equiparItem(item, i => false)
       }
     }
-    else {
-      throw NoSePudoEquiparUnItem
-    }
-    )
-  }
+    else throw NoSePudoEquiparUnItem
+  )
   
   def actualizarInventario(heroe: Heroe) = copy(items = items.filter(_.cumpleCondicion(heroe)))
   
