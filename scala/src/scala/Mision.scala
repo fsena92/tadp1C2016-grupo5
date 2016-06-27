@@ -9,7 +9,7 @@ case class GanarOroParaElPozoComun(val oro: Double) extends Recompensa {
   def cobrar = _ incrementarPozo oro 
 }
 
-case class EncontrarUnItem(val item: Item) extends Recompensa{
+case class EncontrarUnItem(val item: Item) extends Recompensa {
   def cobrar = _ obtenerItem item
 }
 

@@ -31,7 +31,7 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
   def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
   
   def obtenerItem(item: Item): Equipo = {
-    val equipoConItem = for {heroe <- mejorHeroeSegun(h => incrementoStat(h, item))
+    val equipoConItem = for {heroe <- mejorHeroeSegun(incrementoStat(_, item))
       if(incrementoStat(heroe, item) > 0)
     }
     yield reemplazar(heroe, heroe equipar item)
