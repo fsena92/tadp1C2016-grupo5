@@ -54,12 +54,11 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
       puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea)).cobrarRecompensa(mision)})    
   )
 
-  def entrenar(_taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
-      var taberna = _taberna
+  def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
       var equipo = this
       val resultadoEntrenar = for {
-        misionElegida <- taberna.elegirMision(criterio, equipo)
-        equipo <- equipo.realizarMision(misionElegida).toOption
+        misionElegida <- taberna.elegirMision(criterio, this)
+        equipo <- realizarMision(misionElegida).toOption
       }
       yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)
       resultadoEntrenar.getOrElse(equipo)
