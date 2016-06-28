@@ -334,40 +334,41 @@ class UnTest  {
   
   @Test
   def testElegirMision {
-    val estado1 = grupo; val estado2 = grupo
     val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))
     val taberna = new Taberna(List(mision1, mision2))
-    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo).get, mision2)
+    assertEquals(taberna.elegirMision((e1, e2) => grupo.pozoComun > grupo.pozoComun, grupo).get, mision2)
   }
-  
-  @Test
-  def testElegirMisionNoAfectaElEstadoDelEquipoYaQueEsInmutable {
-    val estado1 = grupo; val estado2 = grupo
-    val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
-    val mision2 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(1000))
-    val taberna = new Taberna(List(mision1, mision2))
-    taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo)
-    assertEquals(estado1, grupo)
-  }
-  
+   
   @Test
   def noPuedeRealizarMision {
-    val estado1 = grupo; val estado2 = grupo
     val mision = new Mision(List(RobarTalisman(Maldito)), GanarOroParaElPozoComun(10))
     val taberna = new Taberna(List(mision))
-    assertEquals(taberna.elegirMision((estado1, estado2) => estado1.pozoComun > estado2.pozoComun, grupo), None)
+    assertEquals(taberna.elegirMision((e1, e2) => grupo.pozoComun > grupo.pozoComun, grupo), None)
   }
   
   @Test
   def equipoPuedeEntrenar {
-    val estado1 = grupo
-    val estado2 = grupo
     val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val taberna = new Taberna(List(mision1))
-    assertEquals(grupo.entrenar(taberna, (estado1, estado2) => estado1.pozoComun > estado2.pozoComun), 
+    assertEquals(grupo.entrenar(taberna, (e1, e2) => grupo.pozoComun > grupo.pozoComun), 
         grupo.realizarMision(mision1).get)
   }
+  
+  @Test
+  def tabernaSinMisionesEquipoNoCambiaDeEstado {
+    assertEquals(grupo.entrenar(Taberna(Nil), (_, _) => true), grupo)
+  }
+  
+  @Test
+  def equipoRealizaVariasMisionesAumentandoSuPozoComun {
+    val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
+    val mision2 = new Mision(List(ForzarPuerta), GanarOroParaElPozoComun(50))
+    val taberna = new Taberna(List(mision1, mision2))
+    assertEquals(grupo.entrenar(taberna, (_, _) => grupo.pozoComun > grupo.pozoComun).pozoComun,
+        grupo.realizarMision(mision1).get.realizarMision(mision2).get.pozoComun, 0.01)
+  }
+  
   
   
 
