@@ -53,38 +53,17 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
       yield reemplazar(heroe, heroe realizarTarea tarea)
       puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea)).cobrarRecompensa(mision)})    
   )
-  
-  
-  def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
-    var tab = taberna
-    var equipo = this
-    val misionElegida = tab.elegirMision(criterio, equipo)
-    if(misionElegida.isDefined) {
-      if(equipo.realizarMision(misionElegida.get).isSuccess) {
-        equipo = equipo.realizarMision(misionElegida.get).get
-        tab = tab.misionRealizada(misionElegida.get)
-        equipo.entrenar(tab, criterio)
+
+  def entrenar(_taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
+      var taberna = _taberna
+      var equipo = this
+      val resultadoEntrenar = for {
+        misionElegida <- taberna.elegirMision(criterio, equipo)
+        equipo <- equipo.realizarMision(misionElegida).toOption
       }
-      else equipo
-    }
-    else equipo
+      yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)
+      resultadoEntrenar.getOrElse(equipo)
   }
   
-  // Opcion con for
-//    def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
-//      var tab = taberna
-//      var eq: Equipo = this
-//      val asd = for {
-//        misionElegida <- tab.elegirMision(criterio, eq)
-//        equipo <- eq.realizarMision(misionElegida).toOption
-//      }
-//      yield {
-//        tab = tab.misionRealizada(misionElegida)
-//        equipo.entrenar(taberna, criterio)
-//      }
-//      asd.getOrElse(eq)
-//  }
-    
-    
-    
+  
 }
