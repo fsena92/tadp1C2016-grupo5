@@ -10,33 +10,33 @@ case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: 
   def velocidadFinal = mayorAUno(inventario velocidadFinal(this, statTrabajo(velocidadBase,  _ velocidad _ )))
   def inteligenciaFinal = mayorAUno(inventario inteligenciaFinal(this, statTrabajo(inteligenciaBase, _ inteligencia _ )))
   
-  def mayorAUno(valorStat: Double) = if(valorStat < 1) 1 ; else valorStat
+  def mayorAUno(valorStat: Double): Double = if(valorStat < 1) 1 ; else valorStat
   
-  def equipar(item: Item) = copy(inventario = inventario.equipar(this, item).get)
+  def equipar(item: Item): Heroe = copy(inventario = inventario.equipar(this, item).get)
   
-  def asignarTrabajo(trabajo: Trabajo) = copy(job = Some(trabajo)).actualizarEstado
+  def asignarTrabajo(trabajo: Trabajo): Heroe = copy(job = Some(trabajo)).actualizarEstado
     
-  def cantidadItems = inventario.cantidadItems
+  def cantidadItems: Double = inventario.cantidadItems
   
-  def desequipar(item: Item) = copy(inventario = inventario.desequipar(item))
+  def desequipar(item: Item): Heroe = copy(inventario = inventario.desequipar(item))
    
-  def statPrincipal = {
+  def statPrincipal: Option[Double] = {
     val semilla: Option[Double] = None
     job.foldLeft(semilla)((base, trabajo) => Some(trabajo.statPrincipal(this)))
   }
   
-  def modificarStats(hp: Double, fuerza: Double, velocidad: Double ,inteligencia: Double) = {
+  def modificarStats(hp: Double, fuerza: Double, velocidad: Double ,inteligencia: Double): Heroe = {
      copy(HPBase = HPBase + hp,
           fuerzaBase = fuerzaBase + fuerza, 
           velocidadBase = velocidadBase + velocidad,
           inteligenciaBase = inteligenciaBase + inteligencia)
   }
   
-  def realizarTarea(tarea: Tarea) = (tarea.afectar(this)).actualizarEstado
+  def realizarTarea(tarea: Tarea): Heroe = tarea.afectar(this).actualizarEstado
   
-  def agregarRecompensaStats(r: StatsRecompensa) = 
+  def agregarRecompensaStats(r: StatsRecompensa): Heroe = 
     modificarStats(r.HP, r.fuerza, r.velocidad, r.inteligencia).actualizarEstado
   
-  def actualizarEstado = copy(inventario = inventario.actualizarInventario(this))
+  def actualizarEstado: Heroe = copy(inventario = inventario.actualizarInventario(this))
    
 }

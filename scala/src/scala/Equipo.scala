@@ -16,29 +16,27 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
   }
  
   def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
-    val maximo = heroes map(cuantificador(_)) max
-    val heroe = heroes filter(cuantificador(_) equals maximo)
-    if (heroe isEmpty) None
-    else Some(heroe head) 
+    val maximo = heroes.map(h => cuantificador(h)).max
+    heroes.filter(h => cuantificador(h) == maximo).headOption
   }
   
-  def incrementarPozo(cantidad: Double) = copy(pozoComun = pozoComun + cantidad)
+  def incrementarPozo(cantidad: Double): Equipo = copy(pozoComun = pozoComun + cantidad)
   
-  def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: StatsRecompensa) = {
+  def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: StatsRecompensa): Equipo = {
     copy(heroes = heroes.filter(condicion(_)).map(_.agregarRecompensaStats(recompensa)))
   }
  
-  def incrementoStat(heroe: Heroe, item: Item) = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
+  def incrementoStat(heroe: Heroe, item: Item): Double = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
   
   def obtenerItem(item: Item): Equipo = {
     val equipoConItem = for {heroe <- mejorHeroeSegun(incrementoStat(_, item))
-      if(incrementoStat(heroe, item) > 0)
+      if incrementoStat(heroe, item) > 0
     }
     yield reemplazar(heroe, heroe equipar item)
     equipoConItem.getOrElse(incrementarPozo(item.precio))
   }
   
-  def equiparATodos(item: Item) = copy(heroes = heroes.map(_.equipar(item)))
+  def equiparATodos(item: Item): Equipo = copy(heroes = heroes.map(_.equipar(item)))
   
   def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
     for {facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad)}
@@ -55,7 +53,7 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
   )
 
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
-      var equipo = this
+      val equipo = this
       val resultadoEntrenar = for {
         misionElegida <- taberna.elegirMision(criterio, this)
         equipo <- realizarMision(misionElegida).toOption
