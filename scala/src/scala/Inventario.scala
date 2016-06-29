@@ -5,7 +5,7 @@ import scala.util.{Try, Success, Failure}
 
 object NoSePudoEquiparUnItem extends Exception
 
-case class Inventario(val items: List[Item] = Nil) {
+case class Inventario(items: List[Item] = Nil) {
    
   def equipar(heroe: Heroe, item: Item): Try[Inventario] = Try(
     if(item cumpleCondicion heroe) {

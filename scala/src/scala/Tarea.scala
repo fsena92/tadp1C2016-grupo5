@@ -21,7 +21,7 @@ case object PelearContraMonstruo extends Tarea {
 
 case object ForzarPuerta extends Tarea {
  def  facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
-    val incremento = equipo.miembrosConTrabajo.filter(_.job.get eq Ladron).size
+    val incremento = equipo.miembrosConTrabajo.count(_.job.get eq Ladron)
     Some(_.inteligenciaFinal + 10 * incremento)
   }
   override def afectar(heroe: Heroe): Heroe = heroe.modificarStats(-5, 1, 0, 0)

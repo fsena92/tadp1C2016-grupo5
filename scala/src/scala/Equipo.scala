@@ -4,7 +4,7 @@ import scala.util.{Try, Success, Failure}
 
 class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
 
-case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoComun: Double = 0) {
+case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
   def agregarMiembro(unMiembro: Heroe) = copy(heroes = unMiembro :: heroes) 
   def miembrosConTrabajo = heroes.filter(_.job.isDefined)
@@ -15,10 +15,9 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
     else copy(heroes = miembrosConTrabajo).mejorHeroeSegun(_.statPrincipal.get)
   }
  
-  def mejorHeroeSegun(cuantificador: Heroe => Double): Option[Heroe] = {
-    val maximo = heroes.map(h => cuantificador(h)).max
-    heroes.filter(h => cuantificador(h) == maximo).headOption
-  }
+  def maximo = heroes.map(_: Heroe => Double).max
+  
+  def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(h => cuantificador(h) equals maximo(cuantificador))
   
   def incrementarPozo(cantidad: Double): Equipo = copy(pozoComun = pozoComun + cantidad)
   
@@ -43,23 +42,23 @@ case class Equipo(val nombre: String, val heroes: List[Heroe] = Nil, val pozoCom
     yield elMejor
   }
   
-  def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
+  def cobrarRecompensa(mision: Mision, equipo: Equipo): Equipo = mision.recompensa.cobrar(equipo)
   
   def realizarMision(mision: Mision): Try[Equipo] = Try (
-    mision.tareas.foldLeft(this)((equipo, tarea) => {
+    cobrarRecompensa(mision, mision.tareas.foldLeft(this)((equipo, tarea) => {
       val puedeRealizar = for {heroe <- equipo elMejorPuedeRealizar tarea}
-      yield reemplazar(heroe, heroe realizarTarea tarea)
-      puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea)).cobrarRecompensa(mision)})    
+      yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
+      puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea))}))    
   )
 
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
-      val equipo = this
-      val resultadoEntrenar = for {
-        misionElegida <- taberna.elegirMision(criterio, this)
-        equipo <- realizarMision(misionElegida).toOption
-      }
-      yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)
-      resultadoEntrenar.getOrElse(equipo)
+    val equipo = this
+    val resultadoEntrenar = for {
+      misionElegida <- taberna.elegirMision(criterio, this)
+      equipo <- realizarMision(misionElegida).toOption
+    }
+    yield equipo.entrenar(taberna misionRealizada misionElegida, criterio)
+    resultadoEntrenar.getOrElse(equipo)
   }
   
   

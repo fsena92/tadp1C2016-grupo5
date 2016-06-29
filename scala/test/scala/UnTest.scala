@@ -362,11 +362,10 @@ class UnTest  {
   
   @Test
   def equipoRealizaVariasMisionesAumentandoSuPozoComun {
-    val mision1 = new Mision(List(PelearContraMonstruo), GanarOroParaElPozoComun(100))
+    val mision1 = new Mision(List(PelearContraMonstruo, PelearContraMonstruo), GanarOroParaElPozoComun(100))
     val mision2 = new Mision(List(ForzarPuerta), GanarOroParaElPozoComun(50))
     val taberna = new Taberna(List(mision1, mision2))
-    assertEquals(grupo.entrenar(taberna, (_, _) => grupo.pozoComun > grupo.pozoComun).pozoComun,
-        grupo.realizarMision(mision1).get.realizarMision(mision2).get.pozoComun, 0.01)
+    assertEquals(grupo.entrenar(taberna, (_, _) => grupo.pozoComun > grupo.pozoComun).pozoComun, 150, 0.01)
   }
   
   

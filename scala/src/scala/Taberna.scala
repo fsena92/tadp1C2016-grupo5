@@ -3,7 +3,7 @@ package scala
 import scala.util.{Try, Success, Failure}
 
 
-case class Taberna(val misiones: List[Mision]) {
+case class Taberna(misiones: List[Mision]) {
   
   def misionesRealizables(equipo: Equipo): List[Mision] = misiones.filter(m => equipo.realizarMision(m).isSuccess)
  

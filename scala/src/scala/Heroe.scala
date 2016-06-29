@@ -1,7 +1,7 @@
 package scala
 
-case class Heroe(val HPBase: Double, val fuerzaBase: Double, val velocidadBase: Double, val inteligenciaBase: Double,
-                 val job: Option[Trabajo] = None, val inventario: Inventario = new Inventario) { 
+case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inteligenciaBase: Double,
+                 job: Option[Trabajo] = None, inventario: Inventario = new Inventario) { 
   
   def statTrabajo(base: Double, delta: (Trabajo, Double) => Double) = job.foldLeft(base)((b, j) => delta(j, b))
   
