@@ -20,7 +20,7 @@ case object PelearContraMonstruo extends Tarea {
 }
 
 case object ForzarPuerta extends Tarea {
- def  facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
+  def facilidadPara(equipo: Equipo): Option[Heroe => Double] = {
     val incremento = equipo.miembrosConTrabajo.count(_.job.get eq Ladron)
     Some(_.inteligenciaFinal + 10 * incremento)
   }

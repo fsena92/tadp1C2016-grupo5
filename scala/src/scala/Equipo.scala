@@ -62,5 +62,4 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     resultadoEntrenar.getOrElse(equipo)
   }
   
-  
 }

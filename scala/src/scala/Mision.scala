@@ -6,6 +6,7 @@ trait Recompensa {
 }
 
 case class GanarOroParaElPozoComun(oro: Double) extends Recompensa {
+  // retorna una funcion, va de equipo en equipo que realiza algo
   def cobrar = _ incrementarPozo oro 
 }
 

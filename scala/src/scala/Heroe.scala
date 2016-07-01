@@ -27,10 +27,7 @@ case class Heroe(HPBase: Double, fuerzaBase: Double, velocidadBase: Double, inte
   }
   
   def modificarStats(hp: Double, fuerza: Double, velocidad: Double ,inteligencia: Double): Heroe = {
-     copy(HPBase = HPBase + hp,
-          fuerzaBase = fuerzaBase + fuerza, 
-          velocidadBase = velocidadBase + velocidad,
-          inteligenciaBase = inteligenciaBase + inteligencia)
+     copy(HPBase + hp, fuerzaBase + fuerza, velocidadBase + velocidad, inteligenciaBase + inteligencia)
   }
   
   def realizarTarea(tarea: Tarea): Heroe = tarea.afectar(this).actualizarEstado
