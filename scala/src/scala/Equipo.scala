@@ -1,6 +1,6 @@
 package scala
 
-import scala.util.{Try, Success, Failure}
+import scala.util.Try
 
 class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
 
@@ -11,7 +11,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def reemplazar(viejo: Heroe, nuevo: Heroe) = copy(heroes = nuevo :: heroes.filterNot(_ equals viejo))
   
   def lider: Option[Heroe] = {
-    if (miembrosConTrabajo isEmpty) None
+    if (miembrosConTrabajo.isEmpty) None
     else copy(heroes = miembrosConTrabajo).mejorHeroeSegun(_.statPrincipal.get)
   }
  

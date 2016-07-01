@@ -1,7 +1,5 @@
 package scala
 
-import scala.util.{Try, Success, Failure}
-
 
 case class Taberna(misiones: List[Mision]) {
   

@@ -1,7 +1,7 @@
 package scala
 
 import Sector._
-import scala.util.{Try, Success, Failure}
+import scala.util.Try
 
 object NoSePudoEquiparUnItem extends Exception
 
