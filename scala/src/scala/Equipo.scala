@@ -15,14 +15,14 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     else copy(heroes = miembrosConTrabajo).mejorHeroeSegun(_.statPrincipal.get)
   }
  
-  def maximo = heroes.map(_: Heroe => Double).max
+  val maximo = heroes.map(_: Heroe => Double).max
   
   def mejorHeroeSegun(cuantificador: Heroe => Double) = heroes.find(h => cuantificador(h) equals maximo(cuantificador))
   
   def incrementarPozo(cantidad: Double): Equipo = copy(pozoComun = pozoComun + cantidad)
   
   def incrementarStatsMiembros(condicion: Heroe => Boolean, recompensa: StatsRecompensa): Equipo = {
-    copy(heroes = heroes.filter(condicion(_)).map(_.agregarRecompensaStats(recompensa)))
+    copy(heroes = heroes.filter(h => condicion(h)).map(_.agregarRecompensaStats(recompensa)))
   }
  
   def incrementoStat(heroe: Heroe, item: Item): Double = heroe.equipar(item).statPrincipal.get - heroe.statPrincipal.get
@@ -38,7 +38,7 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
   def equiparATodos(item: Item): Equipo = copy(heroes = heroes.map(_.equipar(item)))
   
   def elMejorPuedeRealizar(tarea: Tarea): Option[Heroe] = {
-    for {facilidad <- tarea facilidadPara this; elMejor <- mejorHeroeSegun(facilidad)}
+    for {facilidad <- tarea.facilidadPara(this); elMejor <- mejorHeroeSegun(facilidad)}
     yield elMejor
   }
   
@@ -48,7 +48,8 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     cobrarRecompensa(mision, mision.tareas.foldLeft(this)((equipo, tarea) => {
       val puedeRealizar = for {heroe <- equipo elMejorPuedeRealizar tarea}
       yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
-      puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea))}))    
+      puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea))})
+    )    
   )
 
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
