@@ -1,8 +1,8 @@
 package scala
 
-import scala.util.Try
+import scala.util.{Try, Success, Failure}
 
-class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
+case class TareaFallida(equipo: Equipo, tarea: Tarea) extends Exception 
 
 case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double = 0) {
   
@@ -42,15 +42,30 @@ case class Equipo(nombre: String, heroes: List[Heroe] = Nil, pozoComun: Double =
     yield elMejor
   }
   
-  def cobrarRecompensa(mision: Mision, equipo: Equipo): Equipo = mision.recompensa.cobrar(equipo)
+  def cobrarRecompensa(mision: Mision): Equipo = mision.recompensa.cobrar(this)
   
-  def realizarMision(mision: Mision): Try[Equipo] = Try (
-    cobrarRecompensa(mision, mision.tareas.foldLeft(this)((equipo, tarea) => {
-      val puedeRealizar = for {heroe <- equipo elMejorPuedeRealizar tarea}
-      yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
-      puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea))})
-    )    
-  )
+  def realizarMision(mision: Mision): Try[Equipo] = 
+    mision.tareas.foldLeft(Success(this): Try[Equipo])((resultadoAnterior, tarea) => {
+      resultadoAnterior match {
+        case Failure(_) => resultadoAnterior
+        case Success(equipo) => 
+          postTarea(equipo, tarea).fold(Failure(TareaFallida(equipo, tarea)): Try[Equipo])(Success(_))
+      }
+    }).map(_ cobrarRecompensa mision)
+
+  def postTarea(equipo: Equipo, tarea: Tarea): Option[Equipo] = {
+    for (heroe <- equipo elMejorPuedeRealizar tarea) 
+    yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
+  }
+  
+// version anterior  
+//  def realizarMision(mision: Mision): Try[Equipo] = Try (
+//    cobrarRecompensa(mision, mision.tareas.foldLeft(this)((equipo, tarea) => {
+//      val puedeRealizar = for {heroe <- equipo elMejorPuedeRealizar tarea}
+//      yield equipo.reemplazar(heroe, heroe realizarTarea tarea)
+//      puedeRealizar.getOrElse(throw new TareaFallida(equipo, tarea))})
+//    )    
+//  )
 
   def entrenar(taberna: Taberna, criterio: (Equipo, Equipo) => Boolean): Equipo = {
     val equipo = this
