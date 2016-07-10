@@ -310,7 +310,7 @@ class UnTest  {
 
   @Test
   def equipoForzarPuertaYModificaStatsDelHeroe() = {
-    assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 25, 0.01)
+    assertEquals(otroEquipo.elMejorPuedeRealizar(ForzarPuerta).get.realizarTarea(ForzarPuerta).HPFinal, 30, 0.01)
   }
 
   @Test
